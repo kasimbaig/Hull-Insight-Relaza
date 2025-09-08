@@ -308,15 +308,13 @@ const Modules = () => {
           <h1 className="text-3xl font-bold text-gray-900">Modules</h1>
           <p className="text-gray-600 mt-1">Manage system modules and their configurations</p>
         </div>
-        {hasPermission('Global Masters', 'add') && (
-          <Button 
-            onClick={() => setIsAddDialogOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Module
-          </Button>
-        )}
+        <Button 
+          onClick={() => setIsAddDialogOpen(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add Module
+        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -459,6 +457,9 @@ const Modules = () => {
         onClose={() => setIsAddDialogOpen(false)}
         onSubmit={handleAdd}
         title="Add New Module"
+        description="Create a new system module"
+        submitButtonText="Add Module"
+        isSubmitting={isSubmitting}
       />
 
       {/* Edit Module Form */}
@@ -469,6 +470,9 @@ const Modules = () => {
           onSubmit={handleUpdate}
           module={editingModule}
           title="Edit Module"
+          description="Update module information"
+          submitButtonText="Update Module"
+          isSubmitting={isSubmitting}
         />
       )}
 

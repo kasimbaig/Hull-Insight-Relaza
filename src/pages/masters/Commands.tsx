@@ -308,15 +308,13 @@ const Commands = () => {
           <h1 className="text-3xl font-bold text-gray-900">Commands</h1>
           <p className="text-gray-600 mt-1">Manage naval commands and their configurations</p>
         </div>
-        {hasPermission('Global Masters', 'add') && (
-          <Button 
-            onClick={() => setIsAddDialogOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Command
-          </Button>
-        )}
+        <Button 
+          onClick={() => setIsAddDialogOpen(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add Command
+        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -459,6 +457,9 @@ const Commands = () => {
         onClose={() => setIsAddDialogOpen(false)}
         onSubmit={handleAdd}
         title="Add New Command"
+        description="Create a new naval command"
+        submitButtonText="Add Command"
+        isSubmitting={isSubmitting}
       />
 
       {/* Edit Command Form */}
@@ -469,6 +470,9 @@ const Commands = () => {
           onSubmit={handleUpdate}
           command={editingCommand}
           title="Edit Command"
+          description="Update command information"
+          submitButtonText="Update Command"
+          isSubmitting={isSubmitting}
         />
       )}
 

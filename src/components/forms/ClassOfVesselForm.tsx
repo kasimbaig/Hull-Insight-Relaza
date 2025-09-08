@@ -92,7 +92,7 @@ export const ClassOfVesselForm: React.FC<ClassOfVesselFormProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-xl">{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>

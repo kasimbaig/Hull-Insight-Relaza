@@ -338,15 +338,13 @@ const SubModules = () => {
           <h1 className="text-3xl font-bold text-gray-900">SubModules</h1>
           <p className="text-gray-600 mt-1">Manage system submodules and their configurations</p>
         </div>
-        {hasPermission('Global Masters', 'add') && (
-          <Button 
-            onClick={() => setIsAddDialogOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add SubModule
-          </Button>
-        )}
+        <Button 
+          onClick={() => setIsAddDialogOpen(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add SubModule
+        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -489,6 +487,9 @@ const SubModules = () => {
         onClose={() => setIsAddDialogOpen(false)}
         onSubmit={handleAdd}
         title="Add New SubModule"
+        description="Create a new system submodule"
+        submitButtonText="Add SubModule"
+        isSubmitting={isSubmitting}
       />
 
       {/* Edit SubModule Form */}
@@ -499,6 +500,9 @@ const SubModules = () => {
           onSubmit={handleUpdate}
           subModule={editingSubModule}
           title="Edit SubModule"
+          description="Update submodule information"
+          submitButtonText="Update SubModule"
+          isSubmitting={isSubmitting}
         />
       )}
 

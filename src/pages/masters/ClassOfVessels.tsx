@@ -308,15 +308,13 @@ const ClassOfVessels = () => {
           <h1 className="text-3xl font-bold text-gray-900">Class of Vessels</h1>
           <p className="text-gray-600 mt-1">Manage vessel classes and their configurations</p>
         </div>
-        {hasPermission('Global Masters', 'add') && (
-          <Button 
-            onClick={() => setIsAddDialogOpen(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Add Class of Vessel
-          </Button>
-        )}
+        <Button 
+          onClick={() => setIsAddDialogOpen(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Add Class of Vessel
+        </Button>
       </div>
 
       {/* Stats Cards */}
@@ -459,6 +457,9 @@ const ClassOfVessels = () => {
         onClose={() => setIsAddDialogOpen(false)}
         onSubmit={handleAdd}
         title="Add New Class of Vessel"
+        description="Create a new vessel class"
+        submitButtonText="Add Class of Vessel"
+        isSubmitting={isSubmitting}
       />
 
       {/* Edit Class of Vessel Form */}
@@ -469,6 +470,9 @@ const ClassOfVessels = () => {
           onSubmit={handleUpdate}
           classOfVessel={editingClassOfVessel}
           title="Edit Class of Vessel"
+          description="Update vessel class information"
+          submitButtonText="Update Class of Vessel"
+          isSubmitting={isSubmitting}
         />
       )}
 

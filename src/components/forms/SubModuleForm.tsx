@@ -94,7 +94,9 @@ export const SubModuleForm: React.FC<SubModuleFormProps> = ({
     try {
       setLoadingModules(true);
       const response = await getModules();
-      setModules(response || []);
+      // Handle paginated response - extract results array
+      const modulesData = response?.results || response || [];
+      setModules(Array.isArray(modulesData) ? modulesData : []);
     } catch (error) {
       console.error('Error fetching modules:', error);
       setModules([]);
@@ -149,7 +151,7 @@ export const SubModuleForm: React.FC<SubModuleFormProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle className="text-xl">{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
