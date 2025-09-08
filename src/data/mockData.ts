@@ -56,6 +56,34 @@ export interface CommandsResponse {
   data: CommandAPIResponse[];
 }
 
+export interface CommandsPaginatedResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: CommandAPIResponse[];
+}
+
+// API Response types for Modules
+export interface ModuleAPIResponse {
+  id: number;
+  code: string;
+  active: number;
+  created_on: string;
+  created_ip: string;
+  modified_on: string;
+  modified_ip: string | null;
+  name: string;
+  created_by: number | null;
+  modified_by: number | null;
+}
+
+export interface ModulesPaginatedResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ModuleAPIResponse[];
+}
+
 // API Response types for Class of Vessels
 export interface ClassOfVesselAPIResponse {
   id: number;
@@ -73,6 +101,13 @@ export interface ClassOfVesselAPIResponse {
 export interface ClassOfVesselsResponse {
   status: number;
   data: ClassOfVesselAPIResponse[];
+}
+
+export interface ClassOfVesselsPaginatedResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: ClassOfVesselAPIResponse[];
 }
 
 // API Response types for Dockyards
@@ -749,6 +784,40 @@ export const mockQuarterlySurveys: QuarterlySurvey[] = [
     failedCheckpoints: 3, criticalIssues: 0, createdOn: '2024-03-25', updatedOn: '2024-04-01'
   }
 ];
+
+// SubModule API interfaces
+export interface SubModuleAPIResponse {
+  id: number;
+  module: {
+    id: number;
+    code: string;
+    active: number;
+    created_on: string;
+    created_ip: string;
+    modified_on: string;
+    modified_ip: string | null;
+    name: string;
+    created_by: number | null;
+    modified_by: number | null;
+  };
+  code: string;
+  active: number;
+  created_on: string;
+  created_ip: string;
+  modified_on: string;
+  modified_ip: string | null;
+  name: string;
+  created_by: number | null;
+  modified_by: number | null;
+  parent: number | null;
+}
+
+export interface SubModulesPaginatedResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: SubModuleAPIResponse[];
+}
 
 // Helper functions to get related data
 export const getVesselById = (id: string): Vessel | undefined => mockVessels.find(v => v.id === id);

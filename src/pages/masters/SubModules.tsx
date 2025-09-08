@@ -3,14 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Plus, Search, Database, Filter, Loader2 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -18,7 +10,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { 
+  SubModuleAPIResponse, 
+  SubModulesPaginatedResponse,
+  PaginationInfo
+} from '@/data/mockData';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import { getSubModules, createSubModule, updateSubModule, deleteSubModule } from '@/components/service/apiservice';
+import { Pagination } from '@/components/ui/pagination';
+import MasterTable, { ColumnDefinition } from '@/components/common/MasterTable';
 import { SubModuleForm } from '@/components/forms/SubModuleForm';
 import { DeleteConfirmDialog } from '@/components/dialogs/DeleteConfirmDialog';
 import { ActionButtons } from '@/components/actions/ActionButtons';
@@ -48,30 +49,100 @@ interface SubModule {
   modified_ip: string | null;
   created_by: number | null;
   modified_by: number | null;
-  parent: number;
+  parent: number | null;
 }
 
-export default function SubModules() {
+const SubModules = () => {
   // API state
   const [subModules, setSubModules] = useState<SubModule[]>([]);
   const [filteredSubModules, setFilteredSubModules] = useState<SubModule[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    currentPage: 1,
+    totalPages: 1,
+    hasNext: false,
+    hasPrevious: false,
+    totalItems: 0
+  });
 
   // UI state
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingSubModule, setEditingSubModule] = useState<SubModule | null>(null);
   const [deletingSubModule, setDeletingSubModule] = useState<SubModule | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const { hasPermission, user } = useAuth();
+  const { toast } = useToast();
 
-  // Fetch submodules on component mount
+  // Convert API response to SubModule
+  const convertAPIResponseToSubModule = (apiSubModule: SubModuleAPIResponse): SubModule => ({
+    id: apiSubModule.id,
+    module: {
+      id: apiSubModule.module.id,
+      code: apiSubModule.module.code,
+      name: apiSubModule.module.name,
+      active: apiSubModule.module.active,
+      created_on: apiSubModule.module.created_on,
+      created_ip: apiSubModule.module.created_ip,
+      modified_on: apiSubModule.module.modified_on,
+      modified_ip: apiSubModule.module.modified_ip,
+      created_by: apiSubModule.module.created_by,
+      modified_by: apiSubModule.module.modified_by
+    },
+    code: apiSubModule.code,
+    name: apiSubModule.name,
+    active: apiSubModule.active,
+    created_on: apiSubModule.created_on,
+    created_ip: apiSubModule.created_ip,
+    modified_on: apiSubModule.modified_on,
+    modified_ip: apiSubModule.modified_ip,
+    created_by: apiSubModule.created_by,
+    modified_by: apiSubModule.modified_by,
+    parent: apiSubModule.parent
+  });
+
+  // Helper function to calculate pagination info
+  const calculatePaginationInfo = (response: SubModulesPaginatedResponse, currentPage: number): PaginationInfo => {
+    const itemsPerPage = 10; // Assuming 10 items per page
+    const totalPages = Math.ceil(response.count / itemsPerPage);
+    
+    return {
+      currentPage,
+      totalPages,
+      hasNext: response.next !== null,
+      hasPrevious: response.previous !== null,
+      totalItems: response.count
+    };
+  };
+
+  // Load submodules from API
+  const loadSubModules = async (page: number = 1) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response: SubModulesPaginatedResponse = await getSubModules(page);
+      
+      const convertedSubModules = response.results.map(convertAPIResponseToSubModule);
+      setSubModules(convertedSubModules);
+      setPagination(calculatePaginationInfo(response, page));
+    } catch (err) {
+      console.error('Error loading submodules:', err);
+      setError('Failed to load submodules. Please try again.');
+      setSubModules([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load submodules on component mount and page change
   useEffect(() => {
-    fetchSubModules();
+    loadSubModules(pagination.currentPage);
   }, []);
 
-  // Filter submodules based on search term and status
+  // Filter submodules based on search and status
   useEffect(() => {
     let filtered = subModules.filter(subModule => {
       const matchesSearch = subModule.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -80,217 +151,334 @@ export default function SubModules() {
       
       const matchesStatus = statusFilter === 'all' || 
                            (statusFilter === 'active' && subModule.active === 1) ||
-                           (statusFilter === 'inactive' && subModule.active === 0);
+                           (statusFilter === 'inactive' && subModule.active === 2);
       
       return matchesSearch && matchesStatus;
     });
     
     setFilteredSubModules(filtered);
-  }, [subModules, searchTerm, statusFilter]);
+  }, [searchTerm, statusFilter, subModules]);
 
-  const fetchSubModules = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await getSubModules();
-      setSubModules(response || []);
-    } catch (error) {
-      console.error('Error fetching submodules:', error);
-      setError('Failed to fetch submodules');
-      setSubModules([]);
-    } finally {
-      setLoading(false);
-    }
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    loadSubModules(page);
   };
 
-  const handleAddSubModule = async (data: { name: string; active: number; module: number }) => {
+  // Column definitions for MasterTable
+  const columns: ColumnDefinition<SubModule>[] = [
+    {
+      header: 'SubModule Name',
+      cell: (subModule) => (
+        <div>
+          <div className="font-semibold">{subModule.name}</div>
+          <div className="text-sm text-gray-500">Code: {subModule.code}</div>
+        </div>
+      )
+    },
+    {
+      header: 'Module',
+      cell: (subModule) => (
+        <div>
+          <div className="font-medium">{subModule.module.name}</div>
+          <div className="text-sm text-gray-500">{subModule.module.code}</div>
+        </div>
+      )
+    },
+    {
+      header: 'Parent',
+      cell: (subModule) => (
+        <span className="text-gray-600">
+          {subModule.parent ? `ID: ${subModule.parent}` : 'None'}
+        </span>
+      )
+    },
+    {
+      header: 'Status',
+      cell: (subModule) => (
+        <Badge className={subModule.active === 1 ? "bg-green-100 text-green-800 hover:bg-green-200 border-0" : "bg-gray-100 text-gray-800 hover:bg-gray-200 border-0"}>
+          {subModule.active === 1 ? 'Active' : 'Inactive'}
+        </Badge>
+      )
+    },
+    {
+      header: 'Created',
+      cell: (subModule) => (
+        <div className="text-sm text-gray-600">
+          {new Date(subModule.created_on).toLocaleDateString()}
+        </div>
+      )
+    }
+  ];
+
+  const handleAdd = async (formData: { name: string; active: number; module: number }) => {
     try {
       setIsSubmitting(true);
-      await createSubModule(data);
-      await fetchSubModules();
+      await createSubModule(formData);
+      
       setIsAddDialogOpen(false);
-    } catch (error) {
-      console.error('Error creating submodule:', error);
-      throw error;
+      
+      // Reload the current page to show the new submodule
+      await loadSubModules(pagination.currentPage);
+    
+      toast({
+        title: "SubModule Added",
+        description: `${formData.name} has been successfully added.`,
+      });
+    } catch (err) {
+      console.error('Error creating submodule:', err);
+      toast({
+        title: "Error",
+        description: "Failed to create submodule. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleEditSubModule = async (data: { name: string; active: number; module: number }) => {
+  const handleEdit = (subModule: SubModule) => {
+    setEditingSubModule(subModule);
+  };
+
+  const handleUpdate = async (formData: { name: string; active: number; module: number }) => {
     if (!editingSubModule) return;
     
     try {
       setIsSubmitting(true);
-      await updateSubModule(editingSubModule.id, data);
-      await fetchSubModules();
+      await updateSubModule(editingSubModule.id, formData);
+      
       setEditingSubModule(null);
-    } catch (error) {
-      console.error('Error updating submodule:', error);
-      throw error;
+      
+      // Reload the current page to show the updated submodule
+      await loadSubModules(pagination.currentPage);
+    
+      toast({
+        title: "SubModule Updated",
+        description: `${formData.name} has been successfully updated.`,
+      });
+    } catch (err) {
+      console.error('Error updating submodule:', err);
+      toast({
+        title: "Error",
+        description: "Failed to update submodule. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDeleteSubModule = async () => {
+  const handleDelete = (subModule: SubModule) => {
+    setDeletingSubModule(subModule);
+  };
+
+  const confirmDelete = async () => {
     if (!deletingSubModule) return;
     
     try {
       setIsSubmitting(true);
       await deleteSubModule(deletingSubModule.id);
-      await fetchSubModules();
+      
       setDeletingSubModule(null);
-    } catch (error) {
-      console.error('Error deleting submodule:', error);
+      
+      // Reload the current page to reflect the deletion
+      await loadSubModules(pagination.currentPage);
+      
+      toast({
+        title: "SubModule Deleted",
+        description: `${deletingSubModule.name} has been successfully deleted.`,
+        variant: "destructive",
+      });
+    } catch (err) {
+      console.error('Error deleting submodule:', err);
+      toast({
+        title: "Error",
+        description: "Failed to delete submodule. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  const handleStatusToggle = async (subModule: SubModule) => {
+    try {
+      setIsSubmitting(true);
+      const newStatus = subModule.active === 1 ? 2 : 1;
+      await updateSubModule(subModule.id, {
+        name: subModule.name,
+        active: newStatus,
+        module: subModule.module.id
+      });
+      
+      // Reload the current page to reflect the status change
+      await loadSubModules(pagination.currentPage);
+      
+      toast({
+        title: "Status Updated",
+        description: `${subModule.name} is now ${subModule.active === 1 ? 'Inactive' : 'Active'}.`,
+      });
+    } catch (err) {
+      console.error('Error updating submodule status:', err);
+      toast({
+        title: "Error",
+        description: "Failed to update submodule status. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">SubModules</h1>
-          <p className="text-gray-600 mt-1">Manage system submodules and configurations</p>
+          <p className="text-gray-600 mt-1">Manage system submodules and their configurations</p>
         </div>
-        <Button 
-          onClick={() => setIsAddDialogOpen(true)} 
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add SubModule
-        </Button>
+        {hasPermission('Global Masters', 'add') && (
+          <Button 
+            onClick={() => setIsAddDialogOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add SubModule
+          </Button>
+        )}
       </div>
 
-      {/* Search and Stats */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="Search submodules..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
-                <Filter className="w-4 h-4" />
-                {statusFilter === 'all' ? 'All Status' : 
-                 statusFilter === 'active' ? 'Active' : 'Inactive'}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setStatusFilter('all')}>
-                All Status
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter('active')}>
-                Active
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter('inactive')}>
-                Inactive
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div className="flex items-center gap-4">
-          <Card className="p-4">
-            <div className="flex items-center gap-2">
-              <Database className="w-5 h-5 text-blue-600" />
-              <span className="text-sm font-medium">Total SubModules</span>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-sm font-medium text-gray-600">Total SubModules</CardTitle>
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Database className="h-4 w-4 text-blue-600" />
             </div>
-            <div className="text-2xl font-bold text-blue-600">{subModules.length}</div>
-          </Card>
-          <Card className="p-4">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-sm font-medium">Active</span>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-gray-900">{pagination.totalItems}</div>
+            <p className="text-xs text-gray-500 mt-1">System submodules</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-sm font-medium text-gray-600">Active SubModules</CardTitle>
+            <div className="p-2 bg-green-100 rounded-lg">
+              <Badge className="bg-green-500 border-0 h-4 w-4 p-0" />
             </div>
+          </CardHeader>
+          <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {subModules.filter(subModule => subModule.active === 1).length}
+              {Array.isArray(subModules) ? subModules.filter(subModule => subModule && subModule.active === 1).length : 0}
             </div>
-          </Card>
-        </div>
+            <p className="text-xs text-gray-500 mt-1">Currently active</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-sm font-medium text-gray-600">Inactive SubModules</CardTitle>
+            <div className="p-2 bg-gray-100 rounded-lg">
+              <Badge className="bg-gray-500 border-0 h-4 w-4 p-0" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-gray-600">
+              {Array.isArray(subModules) ? subModules.filter(subModule => subModule && subModule.active === 2).length : 0}
+            </div>
+            <p className="text-xs text-gray-500 mt-1">Currently inactive</p>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Search and Filter */}
+      <Card className="bg-white border border-gray-200 rounded-xl shadow-sm">
+        <CardContent className="p-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search submodules..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full sm:w-auto">
+                  <Filter className="w-4 h-4 mr-2" />
+                  {statusFilter === 'all' ? 'All Status' : statusFilter === 'active' ? 'Active Only' : 'Inactive Only'}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem 
+                  onClick={() => setStatusFilter('all')}
+                  className={statusFilter === 'all' ? 'bg-gray-100' : ''}
+                >
+                  All SubModules
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setStatusFilter('active')}
+                  className={statusFilter === 'active' ? 'bg-gray-100' : ''}
+                >
+                  Active Only
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setStatusFilter('inactive')}
+                  className={statusFilter === 'inactive' ? 'bg-gray-100' : ''}
+                >
+                  Inactive Only
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* SubModules Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>SubModules</CardTitle>
-          <CardDescription>
-            Manage and configure system submodules
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-gray-500">Loading submodules...</div>
+      <Card className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <CardContent className="p-0">
+          <MasterTable
+            columns={columns}
+            data={filteredSubModules}
+            rowKey={(subModule) => subModule.id.toString()}
+            loading={loading}
+            error={error}
+            onRetry={() => loadSubModules(pagination.currentPage)}
+            actionsHeader={<span className="font-semibold text-gray-700 text-right">Actions</span>}
+            renderActions={(subModule) => (
+              <ActionButtons
+                onEdit={() => handleEdit(subModule)}
+                onDelete={() => handleDelete(subModule)}
+                isSubmitting={isSubmitting}
+                hasEditPermission={hasPermission('Global Masters', 'edit')}
+                hasDeletePermission={hasPermission('Global Masters', 'delete')}
+                itemName={subModule.name}
+              />
+            )}
+            headerClassName="bg-gray-50"
+          />
+          
+          {/* Pagination */}
+          {!loading && !error && pagination.totalPages > 1 && (
+            <div className="px-6 py-4 border-t border-gray-200">
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                onPageChange={handlePageChange}
+                hasNext={pagination.hasNext}
+                hasPrevious={pagination.hasPrevious}
+                totalItems={pagination.totalItems}
+                itemsPerPage={10}
+              />
             </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Module</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created On</TableHead>
-                  <TableHead>Modified On</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredSubModules.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-gray-500">
-                      {searchTerm ? 'No submodules found matching your search.' : 'No submodules available.'}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredSubModules.map((subModule) => (
-                    <TableRow key={subModule.id}>
-                      <TableCell className="font-mono text-sm">{subModule.code}</TableCell>
-                      <TableCell className="font-medium">{subModule.name}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{subModule.module.name}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant={subModule.active === 1 ? 'default' : 'secondary'}>
-                          {subModule.active === 1 ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-600">
-                        {formatDate(subModule.created_on)}
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-600">
-                        {formatDate(subModule.modified_on)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <ActionButtons
-                          onEdit={() => setEditingSubModule(subModule)}
-                          onDelete={() => setDeletingSubModule(subModule)}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
           )}
         </CardContent>
       </Card>
@@ -299,34 +487,32 @@ export default function SubModules() {
       <SubModuleForm
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
-        onSubmit={handleAddSubModule}
+        onSubmit={handleAdd}
         title="Add New SubModule"
-        description="Create a new submodule with the following details."
-        submitButtonText="Create SubModule"
-        isSubmitting={isSubmitting}
       />
 
       {/* Edit SubModule Form */}
-      <SubModuleForm
-        isOpen={!!editingSubModule}
-        onClose={() => setEditingSubModule(null)}
-        onSubmit={handleEditSubModule}
-        subModule={editingSubModule}
-        title="Edit SubModule"
-        description="Update the submodule information."
-        submitButtonText="Update SubModule"
-        isSubmitting={isSubmitting}
-      />
+      {editingSubModule && (
+        <SubModuleForm
+          isOpen={!!editingSubModule}
+          onClose={() => setEditingSubModule(null)}
+          onSubmit={handleUpdate}
+          subModule={editingSubModule}
+          title="Edit SubModule"
+        />
+      )}
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmDialog
         isOpen={!!deletingSubModule}
         onClose={() => setDeletingSubModule(null)}
-        onConfirm={handleDeleteSubModule}
+        onConfirm={confirmDelete}
         title="Delete SubModule"
         description={`Are you sure you want to delete "${deletingSubModule?.name}"? This action cannot be undone.`}
-        isSubmitting={isSubmitting}
+        isLoading={isSubmitting}
       />
     </div>
   );
-}
+};
+
+export default SubModules;

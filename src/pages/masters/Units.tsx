@@ -82,42 +82,15 @@ const Units = () => {
     try {
       setLoading(true);
       setError(null);
-      const response = await getUnits(page);
+      const response: UnitsPaginatedResponse = await getUnits(page);
       
-      // Handle the actual API response structure: { status: 200, data: [...] }
-      let unitsData: UnitAPIResponse[] = [];
-      if (response && response.data && Array.isArray(response.data)) {
-        unitsData = response.data;
-      } else if (response && response.results && Array.isArray(response.results)) {
-        // Fallback for paginated response structure
-        unitsData = response.results;
-      } else if (Array.isArray(response)) {
-        // Fallback for direct array response
-        unitsData = response;
-      } else {
-        console.warn('Unexpected API response structure:', response);
-        unitsData = [];
-      }
-      
-      const convertedUnits = unitsData.map(convertAPIResponseToUnit);
+      const convertedUnits = response.results.map(convertAPIResponseToUnit);
       setUnits(convertedUnits);
-      
-      // For non-paginated response, set basic pagination info
-      setPagination({
-        currentPage: 1,
-        totalPages: 1,
-        hasNext: false,
-        hasPrevious: false,
-        totalItems: convertedUnits.length
-      });
+      setPagination(calculatePaginationInfo(response, page));
     } catch (err) {
       console.error('Error loading units:', err);
       setError('Failed to load units. Please try again.');
-      toast({
-        title: "Error",
-        description: "Failed to load units. Please try again.",
-        variant: "destructive",
-      });
+      setUnits([]);
     } finally {
       setLoading(false);
     }

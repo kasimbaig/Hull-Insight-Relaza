@@ -222,20 +222,10 @@ export const deleteRequest = async (endpoint) => {
 };
 
 // Units API functions
-export const getUnits = async () => {
+export const getUnits = async (page: number = 1) => {
   try {
-    const response = await getRequest('master/units/');
-    // Handle different response structures safely
-    if (response && response.data && Array.isArray(response.data)) {
-      return response;
-    } else if (response && response.results && Array.isArray(response.results)) {
-      return response;
-    } else if (Array.isArray(response)) {
-      return response;
-    } else {
-      console.warn('Unexpected API response structure for units:', response);
-      return { data: [] };
-    }
+    const response = await getRequest(`master/units/?page=${page}`);
+    return response;
   } catch (error) {
     console.error('Get Units Error:', error.response?.data || error.message);
     throw error;
@@ -281,9 +271,9 @@ export const deleteUnit = async (unitId) => {
 };
 
 // Commands API functions
-export const getCommands = async () => {
+export const getCommands = async (page: number = 1) => {
   try {
-    const response = await getRequest('master/commands/');
+    const response = await getRequest(`master/commands/?page=${page}`);
     return response;
   } catch (error) {
     console.error('Get Commands Error:', error.response?.data || error.message);
@@ -330,9 +320,9 @@ export const deleteCommand = async (commandId) => {
 };
 
 // Class of Vessels API functions
-export const getClassOfVessels = async () => {
+export const getClassOfVessels = async (page: number = 1) => {
   try {
-    const response = await getRequest('master/classofvessels/');
+    const response = await getRequest(`master/classofvessels/?page=${page}`);
     return response;
   } catch (error) {
     console.error('Get Class of Vessels Error:', error.response?.data || error.message);
@@ -460,10 +450,10 @@ export const deleteUser = async (userId) => {
 };
 
 // Modules API functions
-export const getModules = async () => {
+export const getModules = async (page: number = 1) => {
   try {
-    const response = await getRequest('master/modules/');
-    return response.data || response;
+    const response = await getRequest(`master/modules/?page=${page}`);
+    return response;
   } catch (error) {
     console.error('Get Modules Error:', error.response?.data || error.message);
     throw error;
@@ -509,10 +499,10 @@ export const deleteModule = async (moduleId) => {
 };
 
 // SubModules API functions
-export const getSubModules = async () => {
+export const getSubModules = async (page: number = 1) => {
   try {
-    const response = await getRequest('master/submodules/');
-    return response.data || response;
+    const response = await getRequest(`master/submodules/?page=${page}`);
+    return response;
   } catch (error) {
     console.error('Get SubModules Error:', error.response?.data || error.message);
     throw error;
@@ -668,9 +658,9 @@ export const deleteVessel = async (vesselId) => {
 };
 
 // Dockyards API functions
-export const getDockyards = async () => {
+export const getDockyards = async (page: number = 1) => {
   try {
-    const response = await getRequest('master/dockyards/');
+    const response = await getRequest(`master/dockyards/?page=${page}`);
     return response;
   } catch (error) {
     console.error('Get Dockyards Error:', error.response?.data || error.message);

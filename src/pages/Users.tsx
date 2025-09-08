@@ -398,7 +398,7 @@ export default function Users() {
                     className="w-full p-2 border border-gray-300 rounded-md"
                   >
                     <option value={1}>Active</option>
-                    <option value={0}>Inactive</option>
+                    <option value={2}>Inactive</option>
                   </select>
                 </div>
               </div>
@@ -508,7 +508,7 @@ export default function Users() {
                       <TableCell>{user.vessel_name || '-'}</TableCell>
                       <TableCell>
                         <Badge variant={user.status === 1 ? 'default' : 'secondary'}>
-                          {user.status === 1 ? 'Active' : 'Inactive'}
+                          {user.status === 1 ? 'Active' : user.status === 2 ? 'Inactive' : 'Unknown'}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right">

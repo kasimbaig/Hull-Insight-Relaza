@@ -101,7 +101,7 @@ export default function UsersManagement() {
         
         const matchesStatus = statusFilter === 'all' || 
                              (statusFilter === 'active' && user.status === 1) ||
-                             (statusFilter === 'inactive' && user.status === 0);
+                             (statusFilter === 'inactive' && user.status === 2);
         
         return matchesSearch && matchesStatus;
       });
@@ -367,7 +367,7 @@ export default function UsersManagement() {
                       <TableCell>{user.vessel_name || '-'}</TableCell>
                       <TableCell>
                         <Badge variant={user.status === 1 ? 'default' : 'secondary'}>
-                          {user.status === 1 ? 'Active' : 'Inactive'}
+                          {user.status === 1 ? 'Active' : user.status === 2 ? 'Inactive' : 'Unknown'}
                         </Badge>
                       </TableCell>
                       {/* <TableCell className="text-sm text-gray-600">

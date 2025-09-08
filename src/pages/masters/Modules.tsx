@@ -3,14 +3,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
 import { Plus, Search, Database, Filter, Loader2 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -18,7 +10,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { 
+  ModuleAPIResponse, 
+  ModulesPaginatedResponse,
+  PaginationInfo
+} from '@/data/mockData';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
 import { getModules, createModule, updateModule, deleteModule } from '@/components/service/apiservice';
+import { Pagination } from '@/components/ui/pagination';
+import MasterTable, { ColumnDefinition } from '@/components/common/MasterTable';
 import { ModuleForm } from '@/components/forms/ModuleForm';
 import { DeleteConfirmDialog } from '@/components/dialogs/DeleteConfirmDialog';
 import { ActionButtons } from '@/components/actions/ActionButtons';
@@ -36,27 +37,84 @@ interface Module {
   modified_by: number | null;
 }
 
-export default function Modules() {
+const Modules = () => {
   // API state
   const [modules, setModules] = useState<Module[]>([]);
   const [filteredModules, setFilteredModules] = useState<Module[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    currentPage: 1,
+    totalPages: 1,
+    hasNext: false,
+    hasPrevious: false,
+    totalItems: 0
+  });
 
   // UI state
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'inactive'>('all');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingModule, setEditingModule] = useState<Module | null>(null);
   const [deletingModule, setDeletingModule] = useState<Module | null>(null);
-  const [statusFilter, setStatusFilter] = useState<string>('all');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const { hasPermission, user } = useAuth();
+  const { toast } = useToast();
 
-  // Fetch modules on component mount
+  // Convert API response to Module
+  const convertAPIResponseToModule = (apiModule: ModuleAPIResponse): Module => ({
+    id: apiModule.id,
+    code: apiModule.code,
+    name: apiModule.name,
+    active: apiModule.active,
+    created_on: apiModule.created_on,
+    created_ip: apiModule.created_ip,
+    modified_on: apiModule.modified_on,
+    modified_ip: apiModule.modified_ip,
+    created_by: apiModule.created_by,
+    modified_by: apiModule.modified_by
+  });
+
+  // Helper function to calculate pagination info
+  const calculatePaginationInfo = (response: ModulesPaginatedResponse, currentPage: number): PaginationInfo => {
+    const itemsPerPage = 10; // Assuming 10 items per page
+    const totalPages = Math.ceil(response.count / itemsPerPage);
+    
+    return {
+      currentPage,
+      totalPages,
+      hasNext: response.next !== null,
+      hasPrevious: response.previous !== null,
+      totalItems: response.count
+    };
+  };
+
+  // Load modules from API
+  const loadModules = async (page: number = 1) => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response: ModulesPaginatedResponse = await getModules(page);
+      
+      const convertedModules = response.results.map(convertAPIResponseToModule);
+      setModules(convertedModules);
+      setPagination(calculatePaginationInfo(response, page));
+    } catch (err) {
+      console.error('Error loading modules:', err);
+      setError('Failed to load modules. Please try again.');
+      setModules([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load modules on component mount and page change
   useEffect(() => {
-    fetchModules();
+    loadModules(pagination.currentPage);
   }, []);
 
-  // Filter modules based on search term and status
+  // Filter modules based on search and status
   useEffect(() => {
     let filtered = modules.filter(module => {
       const matchesSearch = module.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -64,214 +122,333 @@ export default function Modules() {
       
       const matchesStatus = statusFilter === 'all' || 
                            (statusFilter === 'active' && module.active === 1) ||
-                           (statusFilter === 'inactive' && module.active === 0);
+                           (statusFilter === 'inactive' && module.active === 2);
       
       return matchesSearch && matchesStatus;
     });
     
     setFilteredModules(filtered);
-  }, [modules, searchTerm, statusFilter]);
+  }, [searchTerm, statusFilter, modules]);
 
-  const fetchModules = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await getModules();
-      setModules(response || []);
-    } catch (error) {
-      console.error('Error fetching modules:', error);
-      setError('Failed to fetch modules');
-      setModules([]);
-    } finally {
-      setLoading(false);
-    }
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    loadModules(page);
   };
 
-  const handleAddModule = async (data: { name: string; active: number }) => {
+  // Column definitions for MasterTable
+  const columns: ColumnDefinition<Module>[] = [
+    {
+      header: 'Module Name',
+      cell: (module) => (
+        <div>
+          <div className="font-semibold">{module.name}</div>
+          <div className="text-sm text-gray-500">Code: {module.code}</div>
+        </div>
+      )
+    },
+    {
+      header: 'Status',
+      cell: (module) => (
+        <Badge className={module.active === 1 ? "bg-green-100 text-green-800 hover:bg-green-200 border-0" : "bg-gray-100 text-gray-800 hover:bg-gray-200 border-0"}>
+          {module.active === 1 ? 'Active' : 'Inactive'}
+        </Badge>
+      )
+    },
+    {
+      header: 'Created',
+      cell: (module) => (
+        <div className="text-sm text-gray-600">
+          {new Date(module.created_on).toLocaleDateString()}
+        </div>
+      )
+    },
+    {
+      header: 'Modified',
+      cell: (module) => (
+        <div className="text-sm text-gray-600">
+          {module.modified_on ? new Date(module.modified_on).toLocaleDateString() : 'Never'}
+        </div>
+      )
+    }
+  ];
+
+  const handleAdd = async (formData: { name: string; code: string }) => {
     try {
       setIsSubmitting(true);
-      await createModule(data);
-      await fetchModules();
+      await createModule({
+        name: formData.name,
+        code: formData.code,
+        active: 1
+      });
+      
       setIsAddDialogOpen(false);
-    } catch (error) {
-      console.error('Error creating module:', error);
-      throw error;
+      
+      // Reload the current page to show the new module
+      await loadModules(pagination.currentPage);
+    
+      toast({
+        title: "Module Added",
+        description: `${formData.name} has been successfully added.`,
+      });
+    } catch (err) {
+      console.error('Error creating module:', err);
+      toast({
+        title: "Error",
+        description: "Failed to create module. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleEditModule = async (data: { name: string; active: number }) => {
+  const handleEdit = (module: Module) => {
+    setEditingModule(module);
+  };
+
+  const handleUpdate = async (formData: { name: string; code: string }) => {
     if (!editingModule) return;
     
     try {
       setIsSubmitting(true);
-      await updateModule(editingModule.id, data);
-      await fetchModules();
+      await updateModule(editingModule.id, {
+        name: formData.name,
+        code: formData.code,
+        active: editingModule.active
+      });
+      
       setEditingModule(null);
-    } catch (error) {
-      console.error('Error updating module:', error);
-      throw error;
+      
+      // Reload the current page to show the updated module
+      await loadModules(pagination.currentPage);
+    
+      toast({
+        title: "Module Updated",
+        description: `${formData.name} has been successfully updated.`,
+      });
+    } catch (err) {
+      console.error('Error updating module:', err);
+      toast({
+        title: "Error",
+        description: "Failed to update module. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDeleteModule = async () => {
+  const handleDelete = (module: Module) => {
+    setDeletingModule(module);
+  };
+
+  const confirmDelete = async () => {
     if (!deletingModule) return;
     
     try {
       setIsSubmitting(true);
       await deleteModule(deletingModule.id);
-      await fetchModules();
+      
       setDeletingModule(null);
-    } catch (error) {
-      console.error('Error deleting module:', error);
+      
+      // Reload the current page to reflect the deletion
+      await loadModules(pagination.currentPage);
+      
+      toast({
+        title: "Module Deleted",
+        description: `${deletingModule.name} has been successfully deleted.`,
+        variant: "destructive",
+      });
+    } catch (err) {
+      console.error('Error deleting module:', err);
+      toast({
+        title: "Error",
+        description: "Failed to delete module. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    });
+  const handleStatusToggle = async (module: Module) => {
+    try {
+      setIsSubmitting(true);
+      const newStatus = module.active === 1 ? 2 : 1;
+      await updateModule(module.id, {
+        name: module.name,
+        code: module.code,
+        active: newStatus
+      });
+      
+      // Reload the current page to reflect the status change
+      await loadModules(pagination.currentPage);
+      
+      toast({
+        title: "Status Updated",
+        description: `${module.name} is now ${module.active === 1 ? 'Inactive' : 'Active'}.`,
+      });
+    } catch (err) {
+      console.error('Error updating module status:', err);
+      toast({
+        title: "Error",
+        description: "Failed to update module status. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Modules</h1>
-          <p className="text-gray-600 mt-1">Manage system modules and configurations</p>
+          <p className="text-gray-600 mt-1">Manage system modules and their configurations</p>
         </div>
-        <Button 
-          onClick={() => setIsAddDialogOpen(true)} 
-          className="bg-blue-600 hover:bg-blue-700"
-        >
-          <Plus className="w-4 h-4 mr-2" />
-          Add Module
-        </Button>
+        {hasPermission('Global Masters', 'add') && (
+          <Button 
+            onClick={() => setIsAddDialogOpen(true)}
+            className="bg-blue-600 hover:bg-blue-700 text-white"
+          >
+            <Plus className="w-4 h-4 mr-2" />
+            Add Module
+          </Button>
+        )}
       </div>
 
-      {/* Search and Stats */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="relative w-64">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="Search modules..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="flex items-center gap-2">
-                <Filter className="w-4 h-4" />
-                {statusFilter === 'all' ? 'All Status' : 
-                 statusFilter === 'active' ? 'Active' : 'Inactive'}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setStatusFilter('all')}>
-                All Status
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter('active')}>
-                Active
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setStatusFilter('inactive')}>
-                Inactive
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-        <div className="flex items-center gap-4">
-          <Card className="p-4">
-            <div className="flex items-center gap-2">
-              <Database className="w-5 h-5 text-blue-600" />
-              <span className="text-sm font-medium">Total Modules</span>
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-sm font-medium text-gray-600">Total Modules</CardTitle>
+            <div className="p-2 bg-blue-100 rounded-lg">
+              <Database className="h-4 w-4 text-blue-600" />
             </div>
-            <div className="text-2xl font-bold text-blue-600">{modules.length}</div>
-          </Card>
-          <Card className="p-4">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-              <span className="text-sm font-medium">Active</span>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-gray-900">{pagination.totalItems}</div>
+            <p className="text-xs text-gray-500 mt-1">System modules</p>
+          </CardContent>
+        </Card>
+        
+        <Card className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-sm font-medium text-gray-600">Active Modules</CardTitle>
+            <div className="p-2 bg-green-100 rounded-lg">
+              <Badge className="bg-green-500 border-0 h-4 w-4 p-0" />
             </div>
+          </CardHeader>
+          <CardContent>
             <div className="text-2xl font-bold text-green-600">
-              {modules.filter(module => module.active === 1).length}
+              {Array.isArray(modules) ? modules.filter(module => module && module.active === 1).length : 0}
             </div>
-          </Card>
-        </div>
+            <p className="text-xs text-gray-500 mt-1">Currently active</p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+            <CardTitle className="text-sm font-medium text-gray-600">Inactive Modules</CardTitle>
+            <div className="p-2 bg-gray-100 rounded-lg">
+              <Badge className="bg-gray-500 border-0 h-4 w-4 p-0" />
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-gray-600">
+              {Array.isArray(modules) ? modules.filter(module => module && module.active === 2).length : 0}
+            </div>
+            <p className="text-xs text-gray-500 mt-1">Currently inactive</p>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Search and Filter */}
+      <Card className="bg-white border border-gray-200 rounded-xl shadow-sm">
+        <CardContent className="p-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                <Input
+                  placeholder="Search modules..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
+            </div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="w-full sm:w-auto">
+                  <Filter className="w-4 h-4 mr-2" />
+                  {statusFilter === 'all' ? 'All Status' : statusFilter === 'active' ? 'Active Only' : 'Inactive Only'}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem 
+                  onClick={() => setStatusFilter('all')}
+                  className={statusFilter === 'all' ? 'bg-gray-100' : ''}
+                >
+                  All Modules
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setStatusFilter('active')}
+                  className={statusFilter === 'active' ? 'bg-gray-100' : ''}
+                >
+                  Active Only
+                </DropdownMenuItem>
+                <DropdownMenuItem 
+                  onClick={() => setStatusFilter('inactive')}
+                  className={statusFilter === 'inactive' ? 'bg-gray-100' : ''}
+                >
+                  Inactive Only
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Modules Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Modules</CardTitle>
-          <CardDescription>
-            Manage and configure system modules
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="text-gray-500">Loading modules...</div>
+      <Card className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+        <CardContent className="p-0">
+          <MasterTable
+            columns={columns}
+            data={filteredModules}
+            rowKey={(module) => module.id.toString()}
+            loading={loading}
+            error={error}
+            onRetry={() => loadModules(pagination.currentPage)}
+            actionsHeader={<span className="font-semibold text-gray-700 text-right">Actions</span>}
+            renderActions={(module) => (
+              <ActionButtons
+                onEdit={() => handleEdit(module)}
+                onDelete={() => handleDelete(module)}
+                isSubmitting={isSubmitting}
+                hasEditPermission={hasPermission('Global Masters', 'edit')}
+                hasDeletePermission={hasPermission('Global Masters', 'delete')}
+                itemName={module.name}
+              />
+            )}
+            headerClassName="bg-gray-50"
+          />
+          
+          {/* Pagination */}
+          {!loading && !error && pagination.totalPages > 1 && (
+            <div className="px-6 py-4 border-t border-gray-200">
+              <Pagination
+                currentPage={pagination.currentPage}
+                totalPages={pagination.totalPages}
+                onPageChange={handlePageChange}
+                hasNext={pagination.hasNext}
+                hasPrevious={pagination.hasPrevious}
+                totalItems={pagination.totalItems}
+                itemsPerPage={10}
+              />
             </div>
-          ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Code</TableHead>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created On</TableHead>
-                  <TableHead>Modified On</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredModules.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={6} className="text-center py-8 text-gray-500">
-                      {searchTerm ? 'No modules found matching your search.' : 'No modules available.'}
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredModules.map((module) => (
-                    <TableRow key={module.id}>
-                      <TableCell className="font-mono text-sm">{module.code}</TableCell>
-                      <TableCell className="font-medium">{module.name}</TableCell>
-                      <TableCell>
-                        <Badge variant={module.active === 1 ? 'default' : 'secondary'}>
-                          {module.active === 1 ? 'Active' : 'Inactive'}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-600">
-                        {formatDate(module.created_on)}
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-600">
-                        {formatDate(module.modified_on)}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <ActionButtons
-                          onEdit={() => setEditingModule(module)}
-                          onDelete={() => setDeletingModule(module)}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
           )}
         </CardContent>
       </Card>
@@ -280,34 +457,32 @@ export default function Modules() {
       <ModuleForm
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
-        onSubmit={handleAddModule}
+        onSubmit={handleAdd}
         title="Add New Module"
-        description="Create a new module with the following details."
-        submitButtonText="Create Module"
-        isSubmitting={isSubmitting}
       />
 
       {/* Edit Module Form */}
-      <ModuleForm
-        isOpen={!!editingModule}
-        onClose={() => setEditingModule(null)}
-        onSubmit={handleEditModule}
-        module={editingModule}
-        title="Edit Module"
-        description="Update the module information."
-        submitButtonText="Update Module"
-        isSubmitting={isSubmitting}
-      />
+      {editingModule && (
+        <ModuleForm
+          isOpen={!!editingModule}
+          onClose={() => setEditingModule(null)}
+          onSubmit={handleUpdate}
+          module={editingModule}
+          title="Edit Module"
+        />
+      )}
 
       {/* Delete Confirmation Dialog */}
       <DeleteConfirmDialog
         isOpen={!!deletingModule}
         onClose={() => setDeletingModule(null)}
-        onConfirm={handleDeleteModule}
+        onConfirm={confirmDelete}
         title="Delete Module"
         description={`Are you sure you want to delete "${deletingModule?.name}"? This action cannot be undone.`}
-        isSubmitting={isSubmitting}
+        isLoading={isSubmitting}
       />
     </div>
   );
-}
+};
+
+export default Modules;
