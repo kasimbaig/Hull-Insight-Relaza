@@ -232,6 +232,16 @@ export const getUnits = async (page: number = 1) => {
   }
 };
 
+export const getUnitsList = async () => {
+  try {
+    const response = await getRequest('master/units/');
+    return response;
+  } catch (error) {
+    console.error('Get Units List Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
 export const createUnit = async (unitData) => {
   try {
     const response = await postRequest('master/units/', unitData);

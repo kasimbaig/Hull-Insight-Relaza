@@ -11,7 +11,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Loader2, Eye, EyeOff } from 'lucide-react';
-import { getUserRoles, getUnits, getVesselsList, getProcesses, getRoleProcessMappings } from '@/components/service/apiservice';
+import { getUserRoles, getUnitsList, getVesselsList, getProcesses, getRoleProcessMappings } from '@/components/service/apiservice';
 
 interface UserRole {
   id: number;
@@ -281,11 +281,9 @@ export const UserForm: React.FC<UserFormProps> = ({
   const fetchUnits = async () => {
     try {
       setLoadingUnits(true);
-      const response = await getUnits();
-      // Handle different response structures safely
-      if (response && Array.isArray(response)) {
-        setUnits(response);
-      } else if (response && response.data && Array.isArray(response.data)) {
+      const response = await getUnitsList();
+      // Handle the API response structure: { status: 200, data: [...] }
+      if (response && response.data && Array.isArray(response.data)) {
         setUnits(response.data);
       } else {
         console.warn('Unexpected units response structure:', response);
