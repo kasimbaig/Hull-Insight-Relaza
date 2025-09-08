@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Edit, Trash2, MoreHorizontal, Power, PowerOff } from 'lucide-react';
+import { Edit, Trash2, MoreHorizontal } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,8 +12,6 @@ import {
 interface ActionButtonsProps {
   onEdit: () => void;
   onDelete: () => void;
-  onToggleStatus: () => void;
-  isActive: boolean;
   isSubmitting: boolean;
   hasEditPermission: boolean;
   hasDeletePermission: boolean;
@@ -23,8 +21,6 @@ interface ActionButtonsProps {
 export const ActionButtons: React.FC<ActionButtonsProps> = ({
   onEdit,
   onDelete,
-  onToggleStatus,
-  isActive,
   isSubmitting,
   hasEditPermission,
   hasDeletePermission,
@@ -59,24 +55,6 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
           >
             <Edit className="h-4 w-4 mr-2" />
             Edit
-          </DropdownMenuItem>
-          
-          <DropdownMenuItem 
-            onClick={onToggleStatus}
-            className="text-amber-600 focus:text-amber-700 cursor-pointer"
-            disabled={isSubmitting}
-          >
-            {isActive ? (
-              <>
-                <PowerOff className="h-4 w-4 mr-2" />
-                Deactivate
-              </>
-            ) : (
-              <>
-                <Power className="h-4 w-4 mr-2" />
-                Activate
-              </>
-            )}
           </DropdownMenuItem>
           
           <DropdownMenuSeparator />

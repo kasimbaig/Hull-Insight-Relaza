@@ -21,6 +21,7 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Pagination } from '@/components/ui/pagination';
 import { Plus, Edit, Trash2, Search, Users, User } from 'lucide-react';
 import { getUsers, createUser, updateUser, deleteUser, getUserRoles } from '@/components/service/apiservice';
 
@@ -33,7 +34,9 @@ interface User {
   status: number;
   phone_no: string | null;
   unit: number | null;
+  unit_name: string | null;
   vessel: string | null;
+  vessel_name: string | null;
   role: number | null;
   role_name: string | null;
   created_on: string;
@@ -45,11 +48,27 @@ interface UserRole {
   name: string;
 }
 
+interface PaginationInfo {
+  currentPage: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+  totalItems: number;
+}
+
+
 export default function Users() {
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    currentPage: 1,
+    totalPages: 1,
+    hasNext: false,
+    hasPrevious: false,
+    totalItems: 0
+  });
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(false);
@@ -65,37 +84,63 @@ export default function Users() {
     role: ''
   });
 
-  // Fetch users and user roles on component mount
+  // Load users on component mount and page change
   useEffect(() => {
-    fetchUsers();
+    fetchUsers(pagination.currentPage);
     fetchUserRoles();
   }, []);
 
   // Filter users based on search term
   useEffect(() => {
-    if (!Array.isArray(users)) {
+    if (!Array.isArray(users) || users.length === 0) {
       setFilteredUsers([]);
       return;
     }
     
-    const filtered = users.filter(user => {
-      if (!user || typeof user !== 'object') return false;
-      return (
-        (user.first_name && user.first_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (user.last_name && user.last_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (user.loginname && user.loginname.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        (user.role_name && user.role_name.toLowerCase().includes(searchTerm.toLowerCase()))
-      );
-    });
-    setFilteredUsers(filtered);
+    try {
+      const filtered = users.filter(user => {
+        if (!user || typeof user !== 'object') return false;
+        return (
+          (user.first_name && user.first_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.last_name && user.last_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.loginname && user.loginname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+          (user.role_name && user.role_name.toLowerCase().includes(searchTerm.toLowerCase()))
+        );
+      });
+      setFilteredUsers(filtered);
+    } catch (error) {
+      console.error('Error filtering users:', error);
+      setFilteredUsers([]);
+    }
   }, [users, searchTerm]);
 
-  const fetchUsers = async () => {
+  const fetchUsers = async (page: number = 1) => {
     try {
       setLoading(true);
-      const response = await getUsers();
-      setUsers(response || []);
+      const response = await getUsers(page);
+      console.log('Users API Response:', response);
+      
+      let usersData = [];
+      
+      // Handle the paginated response structure
+      if (response && response.results && response.results.data) {
+        usersData = Array.isArray(response.results.data) ? response.results.data : [];
+        const paginationInfo = calculatePaginationInfo(response, page);
+        console.log('Pagination Info:', paginationInfo);
+        setPagination(paginationInfo);
+      } else if (response && response.data) {
+        usersData = Array.isArray(response.data) ? response.data : [];
+      } else if (Array.isArray(response)) {
+        usersData = response;
+      } else {
+        console.warn('Unexpected users response structure:', response);
+        usersData = [];
+      }
+      
+      // Ensure usersData is always an array
+      setUsers(Array.isArray(usersData) ? usersData : []);
+      
     } catch (error) {
       console.error('Error fetching users:', error);
       setUsers([]); // Set empty array on error to prevent undefined issues
@@ -103,6 +148,7 @@ export default function Users() {
       setLoading(false);
     }
   };
+
 
   const fetchUserRoles = async () => {
     try {
@@ -204,8 +250,28 @@ export default function Users() {
   };
 
   const getUserInitials = (firstName: string, lastName: string) => {
+    if (!firstName || !lastName) return '??';
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
+
+  // Helper function to calculate pagination info
+  const calculatePaginationInfo = (response: any, currentPage: number): PaginationInfo => {
+    const itemsPerPage = 10; // Assuming 10 items per page
+    const totalPages = Math.ceil(response.count / itemsPerPage);
+    
+    return {
+      currentPage,
+      totalPages,
+      hasNext: response.next !== null,
+      hasPrevious: response.previous !== null,
+      totalItems: response.count
+    };
+  };
+
+  const handlePageChange = (page: number) => {
+    fetchUsers(page);
+  };
+
 
 
   return (
@@ -405,14 +471,13 @@ export default function Users() {
                   <TableHead>Unit</TableHead>
                   <TableHead>Vessel</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsers.length === 0 ? (
+                {!Array.isArray(filteredUsers) || filteredUsers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={10} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                       {searchTerm ? 'No users found matching your search.' : 'No users available.'}
                     </TableCell>
                   </TableRow>
@@ -439,15 +504,12 @@ export default function Users() {
                           <span className="text-gray-400">-</span>
                         )}
                       </TableCell>
-                      <TableCell>{user.unit || '-'}</TableCell>
-                      <TableCell>{user.vessel || '-'}</TableCell>
+                      <TableCell>{user.unit_name || '-'}</TableCell>
+                      <TableCell>{user.vessel_name || '-'}</TableCell>
                       <TableCell>
                         <Badge variant={user.status === 1 ? 'default' : 'secondary'}>
                           {user.status === 1 ? 'Active' : 'Inactive'}
                         </Badge>
-                      </TableCell>
-                      <TableCell className="text-sm text-gray-600">
-                        {formatDate(user.created_on)}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="flex items-center justify-end gap-2">
@@ -477,6 +539,34 @@ export default function Users() {
           )}
         </CardContent>
       </Card>
+
+      {/* Pagination */}
+      {!loading && pagination.totalPages > 1 && (
+        <div className="px-6 py-4 border-t border-gray-200">
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+            hasNext={pagination.hasNext}
+            hasPrevious={pagination.hasPrevious}
+            totalItems={pagination.totalItems}
+            itemsPerPage={10}
+          />
+        </div>
+      )}
+      
+      {/* Debug info - remove this in production */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="mt-4 p-4 bg-gray-100 rounded text-sm">
+          <p><strong>Debug Info:</strong></p>
+          <p>Loading: {loading.toString()}</p>
+          <p>Total Pages: {pagination.totalPages}</p>
+          <p>Current Page: {pagination.currentPage}</p>
+          <p>Total Items: {pagination.totalItems}</p>
+          <p>Has Next: {pagination.hasNext.toString()}</p>
+          <p>Has Previous: {pagination.hasPrevious.toString()}</p>
+        </div>
+      )}
     </div>
   );
 }

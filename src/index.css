@@ -126,4 +126,34 @@
   .hull-status-critical {
     @apply hull-status-badge bg-[hsl(var(--accent)/0.1)] text-[hsl(var(--accent))] border border-[hsl(var(--accent)/0.2)];
   }
+
+  /* Typewriter Effect Animations */
+  .typewriter-cursor {
+    animation: blink 1s infinite;
+  }
+
+  @keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+  }
+
+  .typewriter-text {
+    animation: typewriter-glow 0.1s ease-in-out;
+  }
+
+  @keyframes typewriter-glow {
+    0% { text-shadow: 0 0 5px rgba(59, 130, 246, 0.5); }
+    100% { text-shadow: 0 0 20px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.6); }
+  }
+
+  /* Catchy Font Styles */
+  .naval-title {
+    font-family: 'Orbitron', 'Courier New', monospace;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-shadow: 
+      0 0 10px rgba(59, 130, 246, 0.5),
+      0 0 20px rgba(59, 130, 246, 0.3),
+      0 0 30px rgba(59, 130, 246, 0.1);
+  }
 }

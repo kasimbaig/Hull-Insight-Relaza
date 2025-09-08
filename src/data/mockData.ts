@@ -365,6 +365,140 @@ export interface VesselType {
   status: 'Active' | 'Inactive';
 }
 
+// API Response types for VesselTypes
+export interface VesselTypeAPIResponse {
+  id: number;
+  code: string;
+  active: number;
+  created_on: string;
+  created_ip: string;
+  modified_on: string;
+  modified_ip: string | null;
+  name: string;
+  created_by: number;
+  modified_by: number | null;
+}
+
+export interface VesselTypesPaginatedResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: VesselTypeAPIResponse[];
+}
+
+// Vessels API interfaces
+export interface VesselAPIResponse {
+  id: number;
+  classofvessel: {
+    id: number;
+    code: string;
+    active: number;
+    created_on: string;
+    created_ip: string;
+    modified_on: string;
+    modified_ip: string | null;
+    name: string;
+    created_by: number;
+    modified_by: number | null;
+  };
+  vesseltype: {
+    id: number;
+    code: string;
+    active: number;
+    created_on: string;
+    created_ip: string;
+    modified_on: string;
+    modified_ip: string | null;
+    name: string;
+    created_by: number;
+    modified_by: number | null;
+  };
+  yard: {
+    id: number;
+    code: string;
+    active: number;
+    created_on: string;
+    created_ip: string;
+    modified_on: string;
+    modified_ip: string | null;
+    name: string;
+    created_by: number;
+    modified_by: number | null;
+  };
+  command: {
+    id: number;
+    code: string;
+    active: number;
+    created_on: string;
+    created_ip: string;
+    modified_on: string;
+    modified_ip: string | null;
+    name: string;
+    created_by: number;
+    modified_by: number | null;
+  };
+  code: string;
+  active: number;
+  created_on: string;
+  created_ip: string;
+  modified_on: string;
+  modified_ip: string | null;
+  name: string;
+  year_of_build: number;
+  year_of_delivery: number;
+  created_by: number;
+  modified_by: number | null;
+}
+
+export interface VesselsPaginatedResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: VesselAPIResponse[];
+}
+
+// Dockyard API interface
+export interface DockyardAPIResponse {
+  id: number;
+  code: string;
+  active: number;
+  created_on: string;
+  created_ip: string;
+  modified_on: string;
+  modified_ip: string | null;
+  name: string;
+  created_by: number;
+  modified_by: number | null;
+}
+
+// Vessel Type API interface (simple array response)
+export interface VesselTypeAPIResponseSimple {
+  id: number;
+  code: string;
+  active: number;
+  created_on: string;
+  created_ip: string;
+  modified_on: string;
+  modified_ip: string | null;
+  name: string;
+  created_by: number;
+  modified_by: number | null;
+}
+
+// Class of Vessels API interface (simple array response)
+export interface ClassOfVesselAPIResponseSimple {
+  id: number;
+  code: string;
+  active: number;
+  created_on: string;
+  created_ip: string;
+  modified_on: string;
+  modified_ip: string | null;
+  name: string;
+  created_by: number;
+  modified_by: number | null;
+}
+
 export interface Dockyard {
   id: string;
   name: string;
@@ -385,19 +519,66 @@ export interface Command {
 }
 
 export interface Vessel {
-  id: string;
+  id: number;
+  classofvessel: {
+    id: number;
+    code: string;
+    active: number;
+    created_on: string;
+    created_ip: string;
+    modified_on: string;
+    modified_ip: string | null;
+    name: string;
+    created_by: number;
+    modified_by: number | null;
+  };
+  vesseltype: {
+    id: number;
+    code: string;
+    active: number;
+    created_on: string;
+    created_ip: string;
+    modified_on: string;
+    modified_ip: string | null;
+    name: string;
+    created_by: number;
+    modified_by: number | null;
+  };
+  yard: {
+    id: number;
+    code: string;
+    active: number;
+    created_on: string;
+    created_ip: string;
+    modified_on: string;
+    modified_ip: string | null;
+    name: string;
+    created_by: number;
+    modified_by: number | null;
+  };
+  command: {
+    id: number;
+    code: string;
+    active: number;
+    created_on: string;
+    created_ip: string;
+    modified_on: string;
+    modified_ip: string | null;
+    name: string;
+    created_by: number;
+    modified_by: number | null;
+  };
+  code: string;
+  active: number;
+  created_on: string;
+  created_ip: string;
+  modified_on: string;
+  modified_ip: string | null;
   name: string;
-  classOfVessel: string;
-  vesselType: string;
-  dockyard: string;
-  command: string;
-  yearOfBuild: number;
-  yearOfDelivery: number;
-  pennantNumber: string;
-  displacement: number;
-  status: 'Active' | 'Under Refit' | 'Decommissioned';
-  createdBy: string;
-  createdOn: string;
+  year_of_build: number;
+  year_of_delivery: number;
+  created_by: number;
+  modified_by: number | null;
 }
 
 export interface DamageType {

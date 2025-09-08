@@ -10,8 +10,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Loader2 } from 'lucide-react';
-import { getUserRoles, getUnits, getVessels, getProcesses } from '@/components/service/apiservice';
+import { Loader2, Eye, EyeOff } from 'lucide-react';
+import { getUserRoles, getUnits, getVesselsList, getProcesses, getRoleProcessMappings } from '@/components/service/apiservice';
 
 interface UserRole {
   id: number;
@@ -33,14 +33,64 @@ interface Unit {
 
 interface Vessel {
   id: number;
-  name: string;
+  classofvessel: {
+    id: number;
+    code: string;
+    active: number;
+    created_on: string;
+    created_ip: string;
+    modified_on: string;
+    modified_ip: string | null;
+    name: string;
+    created_by: number;
+    modified_by: number | null;
+  };
+  vesseltype: {
+    id: number;
+    code: string;
+    active: number;
+    created_on: string;
+    created_ip: string;
+    modified_on: string;
+    modified_ip: string | null;
+    name: string;
+    created_by: number;
+    modified_by: number | null;
+  };
+  yard: {
+    id: number;
+    code: string;
+    active: number;
+    created_on: string;
+    created_ip: string;
+    modified_on: string;
+    modified_ip: string | null;
+    name: string;
+    created_by: number;
+    modified_by: number | null;
+  };
+  command: {
+    id: number;
+    code: string;
+    active: number;
+    created_on: string;
+    created_ip: string;
+    modified_on: string;
+    modified_ip: string | null;
+    name: string;
+    created_by: number;
+    modified_by: number | null;
+  };
   code: string;
   active: number;
   created_on: string;
   created_ip: string;
   modified_on: string;
   modified_ip: string | null;
-  created_by: number | null;
+  name: string;
+  year_of_build: number;
+  year_of_delivery: number;
+  created_by: number;
   modified_by: number | null;
 }
 
@@ -51,6 +101,14 @@ interface Process {
   description: string;
   user_roles_count: number;
   active: number;
+}
+
+interface RoleProcessMapping {
+  id: number;
+  user_role: number;
+  process: number;
+  process_name: string;
+  role_name: string;
 }
 
 interface User {
@@ -139,6 +197,9 @@ export const UserForm: React.FC<UserFormProps> = ({
   const [loadingVessels, setLoadingVessels] = useState(false);
   const [processes, setProcesses] = useState<Process[]>([]);
   const [loadingProcesses, setLoadingProcesses] = useState(false);
+  const [roleProcessMappings, setRoleProcessMappings] = useState<RoleProcessMapping[]>([]);
+  const [loadingRoleMappings, setLoadingRoleMappings] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   // Fetch user roles, units, vessels, and processes when form opens
   useEffect(() => {
@@ -161,12 +222,17 @@ export const UserForm: React.FC<UserFormProps> = ({
           email: user.email,
           phone_no: user.phone_no || '',
           unit: user.unit?.toString() || '',
-          vessel: user.vessel || '',
+          vessel: user.vessel?.toString() || '',
           process: user.process?.toString() || '',
           status: user.status,
           role: user.role?.toString() || '',
           password: '' // Don't populate password for edit
         });
+        
+        // If user has a process, fetch role mappings
+        if (user.process) {
+          fetchRoleProcessMappings(user.process);
+        }
       } else {
         setFormData({ 
           first_name: '', 
@@ -181,6 +247,8 @@ export const UserForm: React.FC<UserFormProps> = ({
           role: '',
           password: ''
         });
+        // Clear role mappings for new user
+        setRoleProcessMappings([]);
       }
       setErrors({ 
         first_name: '', 
@@ -234,15 +302,9 @@ export const UserForm: React.FC<UserFormProps> = ({
   const fetchVessels = async () => {
     try {
       setLoadingVessels(true);
-      const response = await getVessels();
-      // Handle different response structures safely
-      if (response && Array.isArray(response)) {
-        setVessels(response);
-      } else if (response && response.data && Array.isArray(response.data)) {
+      const response = await getVesselsList();
+      if (response?.data) {
         setVessels(response.data);
-      } else {
-        console.warn('Unexpected vessels response structure:', response);
-        setVessels([]);
       }
     } catch (error) {
       console.error('Error fetching vessels:', error);
@@ -270,6 +332,29 @@ export const UserForm: React.FC<UserFormProps> = ({
       setProcesses([]);
     } finally {
       setLoadingProcesses(false);
+    }
+  };
+
+  const fetchRoleProcessMappings = async (processId: number) => {
+    try {
+      setLoadingRoleMappings(true);
+      const response = await getRoleProcessMappings(processId);
+      console.log('Role Process Mappings Response:', response);
+      
+      // Handle different response structures safely
+      if (response && Array.isArray(response)) {
+        setRoleProcessMappings(response);
+      } else if (response && response.data && Array.isArray(response.data)) {
+        setRoleProcessMappings(response.data);
+      } else {
+        console.warn('Unexpected role process mappings response structure:', response);
+        setRoleProcessMappings([]);
+      }
+    } catch (error) {
+      console.error('Error fetching role process mappings:', error);
+      setRoleProcessMappings([]);
+    } finally {
+      setLoadingRoleMappings(false);
     }
   };
 
@@ -355,8 +440,8 @@ export const UserForm: React.FC<UserFormProps> = ({
         if (formData.unit !== (user.unit?.toString() || '')) {
           payload.unit = formData.unit ? parseInt(formData.unit) : null;
         }
-        if (formData.vessel !== (user.vessel || '')) {
-          payload.vessel = formData.vessel || null;
+        if (formData.vessel !== (user.vessel?.toString() || '')) {
+          payload.vessel = formData.vessel ? parseInt(formData.vessel) : null;
         }
         if (formData.process !== (user.process?.toString() || '')) {
           payload.process = formData.process ? parseInt(formData.process) : null;
@@ -378,7 +463,7 @@ export const UserForm: React.FC<UserFormProps> = ({
           email: formData.email,
           phone_no: formData.phone_no || null,
           unit: formData.unit ? parseInt(formData.unit) : null,
-          vessel: formData.vessel || null,
+          vessel: formData.vessel ? parseInt(formData.vessel) : null,
           process: formData.process ? parseInt(formData.process) : null,
           status: formData.status,
           user_role: formData.role ? parseInt(formData.role) : null,
@@ -395,6 +480,13 @@ export const UserForm: React.FC<UserFormProps> = ({
     // Clear error when user starts typing
     if (errors[field as keyof typeof errors]) {
       setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+    
+    // If process is changed, fetch role-process mappings and reset role
+    if (field === 'process' && value) {
+      fetchRoleProcessMappings(Number(value));
+      // Reset role when process changes
+      setFormData(prev => ({ ...prev, role: '' }));
     }
   };
 
@@ -468,15 +560,31 @@ export const UserForm: React.FC<UserFormProps> = ({
                 <Label htmlFor="password" className="text-sm font-medium">
                   Password <span className="text-red-500">*</span>
                 </Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter password"
-                  value={formData.password}
-                  onChange={(e) => handleInputChange('password', e.target.value)}
-                  className={`w-full ${errors.password ? 'border-red-500' : ''}`}
-                  disabled={isSubmitting}
-                />
+                <div className="relative">
+                  <Input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter password"
+                    value={formData.password}
+                    onChange={(e) => handleInputChange('password', e.target.value)}
+                    className={`w-full pr-10 ${errors.password ? 'border-red-500' : ''}`}
+                    disabled={isSubmitting}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={() => setShowPassword(!showPassword)}
+                    disabled={isSubmitting}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4 text-gray-400" />
+                    ) : (
+                      <Eye className="h-4 w-4 text-gray-400" />
+                    )}
+                  </Button>
+                </div>
                 {errors.password && (
                   <p className="text-sm text-red-500">{errors.password}</p>
                 )}
@@ -607,16 +715,23 @@ export const UserForm: React.FC<UserFormProps> = ({
                 value={formData.role}
                 onChange={(e) => handleInputChange('role', e.target.value)}
                 className={`w-full p-2 border border-gray-300 rounded-md ${errors.role ? 'border-red-500' : ''}`}
-                disabled={isSubmitting || loadingRoles}
+                disabled={isSubmitting || loadingRoleMappings || !formData.process}
               >
-                <option value="">Select a role</option>
-                {userRoles.map((role) => (
-                  <option key={role.id} value={role.id}>
-                    {role.name}
+                <option value="">
+                  {!formData.process 
+                    ? "Select a process first" 
+                    : loadingRoleMappings 
+                      ? "Loading roles..." 
+                      : "Select a role"
+                  }
+                </option>
+                {roleProcessMappings.map((mapping) => (
+                  <option key={mapping.user_role} value={mapping.user_role}>
+                    {mapping.role_name}
                   </option>
                 ))}
               </select>
-              {loadingRoles && (
+              {loadingRoleMappings && (
                 <p className="text-sm text-gray-500">Loading roles...</p>
               )}
               {errors.role && (

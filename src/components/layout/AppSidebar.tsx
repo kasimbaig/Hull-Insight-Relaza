@@ -420,6 +420,17 @@ export function AppSidebar() {
                               </NavLink>
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
+                          <SidebarMenuSubItem>
+                            <SidebarMenuSubButton asChild>
+                              <NavLink
+                                to="/masters/vessel-types"
+                                className={getNavClassName(isActive('/masters/vessel-types'))}
+                              >
+                                <Ship className="w-4 h-4 flex-shrink-0" />
+                                <span className="ml-2">Vessel Types</span>
+                              </NavLink>
+                            </SidebarMenuSubButton>
+                          </SidebarMenuSubItem>
                         </>
                       )}
                     </SidebarMenuSub>

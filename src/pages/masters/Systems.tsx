@@ -97,11 +97,34 @@ const Systems = () => {
     try {
       setLoading(true);
       setError(null);
-      const response: SystemsPaginatedResponse = await getSystems(page);
+      const response = await getSystems(page);
       
-      const convertedSystems = response.results.map(convertAPIResponseToSystem);
+      // Handle the actual API response structure: { status: 200, data: [...] }
+      let systemsData: SystemAPIResponse[] = [];
+      if (response && response.data && Array.isArray(response.data)) {
+        systemsData = response.data;
+      } else if (response && response.results && Array.isArray(response.results)) {
+        // Fallback for paginated response structure
+        systemsData = response.results;
+      } else if (Array.isArray(response)) {
+        // Fallback for direct array response
+        systemsData = response;
+      } else {
+        console.warn('Unexpected API response structure:', response);
+        systemsData = [];
+      }
+      
+      const convertedSystems = systemsData.map(convertAPIResponseToSystem);
       setSystems(convertedSystems);
-      setPagination(calculatePaginationInfo(response, page));
+      
+      // For non-paginated response, set basic pagination info
+      setPagination({
+        currentPage: 1,
+        totalPages: 1,
+        hasNext: false,
+        hasPrevious: false,
+        totalItems: convertedSystems.length
+      });
     } catch (err) {
       console.error('Error loading systems:', err);
       setError('Failed to load systems. Please try again.');
@@ -304,47 +327,6 @@ const Systems = () => {
     }
   };
 
-  const toggleStatus = async (system: System) => {
-    try {
-      setIsSubmitting(true);
-      // For status toggle, we'll use the update method with the same data
-      await updateSystem(system.id, {
-        name: system.name,
-        remark: system.remark || '',
-        ser: system.ser || '',
-        numbers: system.numbers || '',
-        capabilities_feature: system.capabilities_feature || '',
-        weight_volume_power_consumption: system.weight_volume_power_consumption || '',
-        location: system.location || '',
-        interface: system.interface || '',
-        procurement_router: system.procurement_router || '',
-        vendor: system.vendor || '',
-        cost: system.cost || '',
-        standards: system.standards || '',
-        sustenance: system.sustenance || '',
-        flag: system.flag || '',
-        sotr_type: system.sotr_type || '',
-        sequence: system.sequence || 1
-      });
-      
-      // Reload the current page to reflect the status change
-      await loadSystems(pagination.currentPage);
-      
-      toast({
-        title: "Status Updated",
-        description: `${system.name} is now ${system.status === 'Active' ? 'Inactive' : 'Active'}.`,
-      });
-    } catch (err) {
-      console.error('Error updating system status:', err);
-      toast({
-        title: "Error",
-        description: "Failed to update system status. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const getStatusBadge = (status: string) => {
     return status === 'Active' 
@@ -521,7 +503,6 @@ const Systems = () => {
                 { header: <span className="font-semibold text-gray-700">Flag</span>, cell: (s) => (s as any).flag ? getFlagBadge((s as any).flag) : '-' },
                 { header: <span className="font-semibold text-gray-700">SOTR Type</span>, cell: (s) => (s as any).sotr_type || '-', className: 'text-gray-600' },
                 { header: <span className="font-semibold text-gray-700">Status</span>, cell: (s) => getStatusBadge((s as any).status) },
-                { header: <span className="font-semibold text-gray-700">Created By</span>, accessor: 'createdBy', className: 'text-gray-600' },
               ] as unknown) as ColumnDefinition<any>[]}
               data={filteredSystems}
               rowKey={(s) => (s as any).id}
@@ -533,8 +514,6 @@ const Systems = () => {
                 <ActionButtons
                   onEdit={() => handleEdit(system as any)}
                   onDelete={() => handleDelete(system as any)}
-                  onToggleStatus={() => toggleStatus(system as any)}
-                  isActive={(system as any).status === 'Active'}
                   isSubmitting={isSubmitting}
                   hasEditPermission={true}
                   hasDeletePermission={true}

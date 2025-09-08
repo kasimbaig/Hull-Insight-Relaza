@@ -82,11 +82,34 @@ const Units = () => {
     try {
       setLoading(true);
       setError(null);
-      const response: UnitsPaginatedResponse = await getUnits(page);
+      const response = await getUnits(page);
       
-      const convertedUnits = response.results.map(convertAPIResponseToUnit);
+      // Handle the actual API response structure: { status: 200, data: [...] }
+      let unitsData: UnitAPIResponse[] = [];
+      if (response && response.data && Array.isArray(response.data)) {
+        unitsData = response.data;
+      } else if (response && response.results && Array.isArray(response.results)) {
+        // Fallback for paginated response structure
+        unitsData = response.results;
+      } else if (Array.isArray(response)) {
+        // Fallback for direct array response
+        unitsData = response;
+      } else {
+        console.warn('Unexpected API response structure:', response);
+        unitsData = [];
+      }
+      
+      const convertedUnits = unitsData.map(convertAPIResponseToUnit);
       setUnits(convertedUnits);
-      setPagination(calculatePaginationInfo(response, page));
+      
+      // For non-paginated response, set basic pagination info
+      setPagination({
+        currentPage: 1,
+        totalPages: 1,
+        hasNext: false,
+        hasPrevious: false,
+        totalItems: convertedUnits.length
+      });
     } catch (err) {
       console.error('Error loading units:', err);
       setError('Failed to load units. Please try again.');
@@ -220,33 +243,6 @@ const Units = () => {
     }
   };
 
-  const toggleStatus = async (unit: Unit) => {
-    try {
-      setIsSubmitting(true);
-      // For status toggle, we'll use the update method with the same name
-      // The API should handle the status change based on the existing unit data
-      await updateUnit(unit.id, {
-        name: unit.name
-      });
-      
-      // Reload the current page to reflect the status change
-      await loadUnits(pagination.currentPage);
-      
-      toast({
-        title: "Status Updated",
-        description: `${unit.name} is now ${unit.status === 'Active' ? 'Inactive' : 'Active'}.`,
-      });
-    } catch (err) {
-      console.error('Error updating unit status:', err);
-      toast({
-        title: "Error",
-        description: "Failed to update unit status. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const getStatusBadge = (status: string) => {
     return status === 'Active' 
@@ -396,8 +392,6 @@ const Units = () => {
             <MasterTable
               columns={([
                 { header: <span className="font-semibold text-gray-700">Unit Name</span>, accessor: 'name', className: 'font-medium text-gray-900' },
-                { header: <span className="font-semibold text-gray-700">Created By</span>, accessor: 'createdBy', className: 'text-gray-600' },
-                { header: <span className="font-semibold text-gray-700">Created On</span>, cell: (u) => new Date((u as any).createdOn).toLocaleDateString(), className: 'text-gray-600' },
                 { header: <span className="font-semibold text-gray-700">Status</span>, cell: (u) => getStatusBadge((u as any).status) },
               ] as unknown) as ColumnDefinition<any>[]}
               data={filteredUnits}
@@ -410,8 +404,6 @@ const Units = () => {
                 <ActionButtons
                   onEdit={() => handleEdit(unit as any)}
                   onDelete={() => handleDelete(unit as any)}
-                  onToggleStatus={() => toggleStatus(unit as any)}
-                  isActive={(unit as any).status === 'Active'}
                   isSubmitting={isSubmitting}
                   hasEditPermission={true}
                   hasDeletePermission={true}

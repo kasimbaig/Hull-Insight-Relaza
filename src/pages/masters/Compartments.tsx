@@ -277,41 +277,6 @@ const Compartments = () => {
     }
   };
 
-  const toggleStatus = async (compartment: Compartment) => {
-    try {
-      setIsSubmitting(true);
-      // For status toggle, we'll use the update method with the same data
-      await updateCompartment(compartment.id, {
-        name: compartment.name,
-        remark: compartment.remark || '',
-        ser: compartment.ser || '',
-        numbers: compartment.numbers || '',
-        location: compartment.location || '',
-        equipment: compartment.equipment || '',
-        features: compartment.features || '',
-        layout: compartment.layout || '',
-        special_requirements: compartment.special_requirements || '',
-        standards: compartment.standards || ''
-      });
-      
-      // Reload the current page to reflect the status change
-      await loadCompartments(pagination.currentPage);
-      
-      toast({
-        title: "Status Updated",
-        description: `${compartment.name} is now ${compartment.status === 'Active' ? 'Inactive' : 'Active'}.`,
-      });
-    } catch (err) {
-      console.error('Error updating compartment status:', err);
-      toast({
-        title: "Error",
-        description: "Failed to update compartment status. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const getStatusBadge = (status: string) => {
     return status === 'Active' 
@@ -465,14 +430,13 @@ const Compartments = () => {
                   <TableHead className="font-semibold text-gray-700">Location</TableHead>
                   <TableHead className="font-semibold text-gray-700">SER</TableHead>
                   <TableHead className="font-semibold text-gray-700">Status</TableHead>
-                  <TableHead className="font-semibold text-gray-700">Created By</TableHead>
                   <TableHead className="font-semibold text-gray-700 text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center">
+                    <TableCell colSpan={5} className="h-24 text-center">
                       <div className="flex flex-col items-center justify-center text-gray-500 py-6">
                         <Loader2 className="h-8 w-8 mb-2 animate-spin" />
                         <p>Loading compartments...</p>
@@ -481,7 +445,7 @@ const Compartments = () => {
                   </TableRow>
                 ) : error ? (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center">
+                    <TableCell colSpan={5} className="h-24 text-center">
                       <div className="flex flex-col items-center justify-center text-red-500 py-6">
                         <p className="font-medium">Error loading compartments</p>
                         <p className="text-sm">{error}</p>
@@ -513,13 +477,10 @@ const Compartments = () => {
                         {compartment.ser || '-'}
                       </TableCell>
                       <TableCell>{getStatusBadge(compartment.status)}</TableCell>
-                      <TableCell className="text-gray-600">{compartment.createdBy}</TableCell>
                       <TableCell className="text-right">
                         <ActionButtons
                           onEdit={() => handleEdit(compartment)}
                           onDelete={() => handleDelete(compartment)}
-                          onToggleStatus={() => toggleStatus(compartment)}
-                          isActive={compartment.status === 'Active'}
                           isSubmitting={isSubmitting}
                           hasEditPermission={true}
                           hasDeletePermission={true}
@@ -530,7 +491,7 @@ const Compartments = () => {
                   ))
                 ) : (
                   <TableRow>
-                    <TableCell colSpan={6} className="h-24 text-center">
+                    <TableCell colSpan={5} className="h-24 text-center">
                       <div className="flex flex-col items-center justify-center text-gray-500 py-6">
                         <Search className="h-10 w-10 mb-2 opacity-30" />
                         <p>No compartments found.</p>

@@ -225,7 +225,17 @@ export const deleteRequest = async (endpoint) => {
 export const getUnits = async () => {
   try {
     const response = await getRequest('master/units/');
-    return response;
+    // Handle different response structures safely
+    if (response && response.data && Array.isArray(response.data)) {
+      return response;
+    } else if (response && response.results && Array.isArray(response.results)) {
+      return response;
+    } else if (Array.isArray(response)) {
+      return response;
+    } else {
+      console.warn('Unexpected API response structure for units:', response);
+      return { data: [] };
+    }
   } catch (error) {
     console.error('Get Units Error:', error.response?.data || error.message);
     throw error;
@@ -368,16 +378,6 @@ export const deleteClassOfVessel = async (classOfVesselId) => {
   }
 };
 
-// Dockyards API functions
-export const getDockyards = async (page = 1) => {
-  try {
-    const response = await getRequest(`master/dockyards/?page=${page}`);
-    return response;
-  } catch (error) {
-    console.error('Get Dockyards Error:', error.response?.data || error.message);
-    throw error;
-  }
-};
 
 export const createDockyard = async (dockyardData) => {
   try {
@@ -418,20 +418,11 @@ export const deleteDockyard = async (dockyardId) => {
 };
 
 // Users API functions
-export const getUsers = async () => {
+export const getUsers = async (page = 1) => {
   try {
-    const response = await getRequest('api/auth/users/');
-    // Handle different response structures safely
-    if (response && response.results && response.results.data) {
-      return response.results.data;
-    } else if (response && response.data) {
-      return response.data;
-    } else if (Array.isArray(response)) {
-      return response;
-    } else {
-      console.warn('Unexpected API response structure:', response);
-      return [];
-    }
+    const response = await getRequest(`api/auth/users/?page=${page}`);
+    // Return the full response for pagination handling
+    return response;
   } catch (error) {
     console.error('Get Users Error:', error.response?.data || error.message);
     throw error;
@@ -566,16 +557,6 @@ export const deleteSubModule = async (subModuleId) => {
   }
 };
 
-// Vessels API functions
-export const getVessels = async () => {
-  try {
-    const response = await getRequest('master/vessels/');
-    return response;
-  } catch (error) {
-    console.error('Get Vessels Error:', error.response?.data || error.message);
-    throw error;
-  }
-};
 
 export const getProcesses = async () => {
   try {
@@ -583,6 +564,160 @@ export const getProcesses = async () => {
     return response;
   } catch (error) {
     console.error('Get Processes Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// VesselTypes API functions
+export const getVesselTypes = async (page = 1) => {
+  try {
+    const response = await getRequest(`master/vesseltypes/?page=${page}`);
+    return response;
+  } catch (error) {
+    console.error('Get VesselTypes Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const createVesselType = async (vesselTypeData) => {
+  try {
+    const response = await postRequest('master/vesseltypes/', vesselTypeData);
+    return response;
+  } catch (error) {
+    console.error('Create VesselType Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const updateVesselType = async (vesselTypeId, vesselTypeData) => {
+  try {
+    const payload = {
+      id: parseInt(vesselTypeId),
+      name: vesselTypeData.name,
+      code: vesselTypeData.code
+    };
+    const response = await postRequest('master/vesseltypes/', payload);
+    return response;
+  } catch (error) {
+    console.error('Update VesselType Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const deleteVesselType = async (vesselTypeId) => {
+  try {
+    const payload = {
+      id: parseInt(vesselTypeId),
+      delete: true
+    };
+    const response = await postRequest('master/vesseltypes/', payload);
+    return response;
+  } catch (error) {
+    console.error('Delete VesselType Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Vessels API functions
+export const getVessels = async (page = 1) => {
+  try {
+    const response = await getRequest(`master/vessels/?page=${page}`);
+    return response;
+  } catch (error) {
+    console.error('Get Vessels Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const createVessel = async (vesselData) => {
+  try {
+    const response = await postRequest('master/vessels/', vesselData);
+    return response;
+  } catch (error) {
+    console.error('Create Vessel Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const updateVessel = async (vesselId, vesselData) => {
+  try {
+    const payload = {
+      id: vesselId,
+      ...vesselData
+    };
+    const response = await postRequest('master/vessels/', payload);
+    return response;
+  } catch (error) {
+    console.error('Update Vessel Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const deleteVessel = async (vesselId) => {
+  try {
+    const payload = {
+      id: vesselId,
+      delete: true
+    };
+    const response = await postRequest('master/vessels/', payload);
+    return response;
+  } catch (error) {
+    console.error('Delete Vessel Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Dockyards API functions
+export const getDockyards = async () => {
+  try {
+    const response = await getRequest('master/dockyards/');
+    return response;
+  } catch (error) {
+    console.error('Get Dockyards Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Vessel Types API functions (simple array response)
+export const getVesselTypesList = async () => {
+  try {
+    const response = await getRequest('master/vesseltypes/');
+    return response;
+  } catch (error) {
+    console.error('Get Vessel Types List Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Class of Vessels API functions (simple array response)
+export const getClassOfVesselsList = async () => {
+  try {
+    const response = await getRequest('master/classofvessels/');
+    return response;
+  } catch (error) {
+    console.error('Get Class of Vessels List Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Vessels API functions (simple array response)
+export const getVesselsList = async () => {
+  try {
+    const response = await getRequest('master/vessels/');
+    return response;
+  } catch (error) {
+    console.error('Get Vessels List Error:', error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Role-Process Mappings API function
+export const getRoleProcessMappings = async (processId: number) => {
+  try {
+    const response = await getRequest(`access/role-process-mappings/?process_id=${processId}`);
+    return response;
+  } catch (error) {
+    console.error('Get Role Process Mappings Error:', error.response?.data || error.message);
     throw error;
   }
 };

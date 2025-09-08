@@ -22,6 +22,7 @@ import { getUsers, createUser, updateUser, deleteUser } from '@/components/servi
 import { UserForm } from '@/components/forms/UserForm';
 import { DeleteConfirmDialog } from '@/components/dialogs/DeleteConfirmDialog';
 import { ActionButtons } from '@/components/actions/ActionButtons';
+import { Pagination } from '@/components/ui/pagination';
 
 interface User {
   id: number;
@@ -42,6 +43,16 @@ interface User {
   rankName: string | null;
   process: number | null;
   process_name: string | null;
+   unit_name: string | null; 
+  vessel_name: string | null; 
+}
+
+interface PaginationInfo {
+  currentPage: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrevious: boolean;
+  totalItems: number;
 }
 
 export default function UsersManagement() {
@@ -50,6 +61,13 @@ export default function UsersManagement() {
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    currentPage: 1,
+    totalPages: 1,
+    hasNext: false,
+    hasPrevious: false,
+    totalItems: 0
+  });
 
   // UI state
   const [searchTerm, setSearchTerm] = useState('');
@@ -61,34 +79,74 @@ export default function UsersManagement() {
 
   // Fetch users on component mount
   useEffect(() => {
-    fetchUsers();
+    fetchUsers(pagination.currentPage);
   }, []);
 
   // Filter users based on search term and status
   useEffect(() => {
-    let filtered = users.filter(user => {
-      const matchesSearch = user.first_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           user.last_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           user.loginname.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           (user.role_name && user.role_name.toLowerCase().includes(searchTerm.toLowerCase()));
-      
-      const matchesStatus = statusFilter === 'all' || 
-                           (statusFilter === 'active' && user.status === 1) ||
-                           (statusFilter === 'inactive' && user.status === 0);
-      
-      return matchesSearch && matchesStatus;
-    });
+    if (!Array.isArray(users) || users.length === 0) {
+      setFilteredUsers([]);
+      return;
+    }
     
-    setFilteredUsers(filtered);
+    try {
+      let filtered = users.filter(user => {
+        if (!user || typeof user !== 'object') return false;
+        
+        const matchesSearch = (user.first_name && user.first_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                             (user.last_name && user.last_name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                             (user.loginname && user.loginname.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                             (user.email && user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                             (user.role_name && user.role_name.toLowerCase().includes(searchTerm.toLowerCase()));
+        
+        const matchesStatus = statusFilter === 'all' || 
+                             (statusFilter === 'active' && user.status === 1) ||
+                             (statusFilter === 'inactive' && user.status === 0);
+        
+        return matchesSearch && matchesStatus;
+      });
+      
+      setFilteredUsers(filtered);
+    } catch (error) {
+      console.error('Error filtering users:', error);
+      setFilteredUsers([]);
+    }
   }, [users, searchTerm, statusFilter]);
 
-  const fetchUsers = async () => {
+  // Helper function to calculate pagination info
+  const calculatePaginationInfo = (response: any, currentPage: number): PaginationInfo => {
+    const itemsPerPage = 10; // 10 items per page
+    const totalPages = Math.ceil(response.count / itemsPerPage);
+    return {
+      currentPage,
+      totalPages,
+      hasNext: response.next !== null,
+      hasPrevious: response.previous !== null,
+      totalItems: response.count
+    };
+  };
+
+  const fetchUsers = async (page: number = 1) => {
     try {
       setLoading(true);
       setError(null);
-      const response = await getUsers();
-      setUsers(response || []);
+      const response = await getUsers(page);
+      console.log('Users API Response:', response);
+      
+      // Handle the paginated response structure
+      if (response && response.results && response.results.data) {
+        setUsers(Array.isArray(response.results.data) ? response.results.data : []);
+        const paginationInfo = calculatePaginationInfo(response, page);
+        console.log('Pagination Info:', paginationInfo);
+        setPagination(paginationInfo);
+      } else if (response && response.data) {
+        setUsers(Array.isArray(response.data) ? response.data : []);
+      } else if (Array.isArray(response)) {
+        setUsers(response);
+      } else {
+        console.warn('Unexpected users response structure:', response);
+        setUsers([]);
+      }
     } catch (error) {
       console.error('Error fetching users:', error);
       setError('Failed to fetch users');
@@ -96,6 +154,10 @@ export default function UsersManagement() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (page: number) => {
+    fetchUsers(page);
   };
 
   const handleAddUser = async (data: { 
@@ -112,7 +174,7 @@ export default function UsersManagement() {
     try {
       setIsSubmitting(true);
       await createUser(data);
-      await fetchUsers();
+      await fetchUsers(pagination.currentPage);
       setIsAddDialogOpen(false);
     } catch (error) {
       console.error('Error creating user:', error);
@@ -138,7 +200,7 @@ export default function UsersManagement() {
     try {
       setIsSubmitting(true);
       await updateUser(editingUser.id, data);
-      await fetchUsers();
+      await fetchUsers(pagination.currentPage);
       setEditingUser(null);
     } catch (error) {
       console.error('Error updating user:', error);
@@ -154,7 +216,7 @@ export default function UsersManagement() {
     try {
       setIsSubmitting(true);
       await deleteUser(deletingUser.id);
-      await fetchUsers();
+      await fetchUsers(pagination.currentPage);
       setDeletingUser(null);
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -174,6 +236,7 @@ export default function UsersManagement() {
   };
 
   const getUserInitials = (firstName: string, lastName: string) => {
+    if (!firstName || !lastName) return '??';
     return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
   };
 
@@ -233,7 +296,7 @@ export default function UsersManagement() {
               <Users className="w-5 h-5 text-blue-600" />
               <span className="text-sm font-medium">Total Users</span>
             </div>
-            <div className="text-2xl font-bold text-blue-600">{users.length}</div>
+            <div className="text-2xl font-bold text-blue-600">{pagination.totalItems}</div>
           </Card>
           <Card className="p-4">
             <div className="flex items-center gap-2">
@@ -241,7 +304,7 @@ export default function UsersManagement() {
               <span className="text-sm font-medium">Active</span>
             </div>
             <div className="text-2xl font-bold text-green-600">
-              {users.filter(user => user.status === 1).length}
+              {Array.isArray(users) ? users.filter(user => user && user.status === 1).length : 0}
             </div>
           </Card>
         </div>
@@ -249,12 +312,6 @@ export default function UsersManagement() {
 
       {/* Users Table */}
       <Card>
-        <CardHeader>
-          <CardTitle>Users</CardTitle>
-          <CardDescription>
-            Manage and configure system users
-          </CardDescription>
-        </CardHeader>
         <CardContent>
           {loading ? (
             <div className="flex items-center justify-center py-8">
@@ -272,14 +329,14 @@ export default function UsersManagement() {
                   <TableHead>Unit</TableHead>
                   <TableHead>Vessel</TableHead>
                   <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
+                  {/* <TableHead>Created</TableHead> */}
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredUsers.length === 0 ? (
+                {!Array.isArray(filteredUsers) || filteredUsers.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={10} className="text-center py-8 text-gray-500">
+                    <TableCell colSpan={8} className="text-center py-8 text-gray-500">
                       {searchTerm ? 'No users found matching your search.' : 'No users available.'}
                     </TableCell>
                   </TableRow>
@@ -306,16 +363,16 @@ export default function UsersManagement() {
                           <span className="text-gray-400">-</span>
                         )}
                       </TableCell>
-                      <TableCell>{user.unit || '-'}</TableCell>
-                      <TableCell>{user.vessel || '-'}</TableCell>
+                      <TableCell>{user.unit_name || '-'}</TableCell>
+                      <TableCell>{user.vessel_name || '-'}</TableCell>
                       <TableCell>
                         <Badge variant={user.status === 1 ? 'default' : 'secondary'}>
                           {user.status === 1 ? 'Active' : 'Inactive'}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-sm text-gray-600">
+                      {/* <TableCell className="text-sm text-gray-600">
                         {formatDate(user.created_on)}
-                      </TableCell>
+                      </TableCell> */}
                       <TableCell className="text-right">
                         <ActionButtons
                           onEdit={() => setEditingUser(user)}
@@ -330,6 +387,21 @@ export default function UsersManagement() {
           )}
         </CardContent>
       </Card>
+
+      {/* Pagination */}
+      {!loading && pagination.totalPages > 1 && (
+        <div className="px-6 py-4 border-t border-gray-200">
+          <Pagination
+            currentPage={pagination.currentPage}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+            hasNext={pagination.hasNext}
+            hasPrevious={pagination.hasPrevious}
+            totalItems={pagination.totalItems}
+            itemsPerPage={10}
+          />
+        </div>
+      )}
 
       {/* Add User Form */}
       <UserForm

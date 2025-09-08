@@ -10,6 +10,7 @@ import Dashboard from "./pages/Dashboard";
 import MainLayout from "./components/layout/MainLayout";
 import Units from "./pages/masters/Units";
 import Vessels from "./pages/masters/Vessels";
+import VesselTypes from "./pages/masters/VesselTypes";
 import Commands from "./pages/masters/Commands";
 import ClassOfVessels from "./pages/masters/ClassOfVessels";
 import Dockyards from "./pages/masters/Dockyards";
@@ -84,6 +85,13 @@ const AppRoutes = () => {
         <ProtectedRoute>
           <MainLayout>
             <Vessels />
+          </MainLayout>
+        </ProtectedRoute>
+      } />
+      <Route path="/masters/vessel-types" element={
+        <ProtectedRoute>
+          <MainLayout>
+            <VesselTypes />
           </MainLayout>
         </ProtectedRoute>
       } />

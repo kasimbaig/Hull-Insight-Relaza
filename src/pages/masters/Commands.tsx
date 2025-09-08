@@ -192,33 +192,6 @@ const Commands = () => {
     }
   };
 
-  const toggleStatus = async (command: Command) => {
-    try {
-      setIsSubmitting(true);
-      // For status toggle, we'll use the update method with the same name
-      // The API should handle the status change based on the existing command data
-      await updateCommand(command.id, {
-        name: command.name
-      });
-      
-      // Reload commands to reflect the status change
-      await loadCommands();
-      
-      toast({
-        title: "Status Updated",
-        description: `${command.name} is now ${command.status === 'Active' ? 'Inactive' : 'Active'}.`,
-      });
-    } catch (err) {
-      console.error('Error updating command status:', err);
-      toast({
-        title: "Error",
-        description: "Failed to update command status. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   const getStatusBadge = (status: string) => {
     return status === 'Active' 
@@ -368,8 +341,6 @@ const Commands = () => {
             <MasterTable
               columns={([
                 { header: <span className="font-semibold text-gray-700">Command Name</span>, accessor: 'name', className: 'font-medium text-gray-900' },
-                { header: <span className="font-semibold text-gray-700">Created By</span>, accessor: 'createdBy', className: 'text-gray-600' },
-                { header: <span className="font-semibold text-gray-700">Created On</span>, cell: (c) => new Date((c as any).createdOn).toLocaleDateString(), className: 'text-gray-600' },
                 { header: <span className="font-semibold text-gray-700">Status</span>, cell: (c) => getStatusBadge((c as any).status) },
               ] as unknown) as ColumnDefinition<any>[]}
               data={filteredCommands}
@@ -382,8 +353,6 @@ const Commands = () => {
                 <ActionButtons
                   onEdit={() => handleEdit(command as any)}
                   onDelete={() => handleDelete(command as any)}
-                  onToggleStatus={() => toggleStatus(command as any)}
-                  isActive={(command as any).status === 'Active'}
                   isSubmitting={isSubmitting}
                   hasEditPermission={true}
                   hasDeletePermission={true}
