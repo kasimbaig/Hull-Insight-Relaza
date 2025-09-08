@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Hull Insight Design System - Professional ship management application */
+
+@layer base {
+  :root {
+    /* Hull Insight Brand Colors */
+    --background: 215 25% 97%;
+    --foreground: 215 100% 13%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 100% 13%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 100% 13%;
+
+    /* Primary Navy Brand */
+    --primary: 215 100% 13%;
+    --primary-foreground: 38 50% 95%;
+    --primary-hover: 215 100% 18%;
+
+    /* Secondary Golden White */
+    --secondary: 38 50% 95%;
+    --secondary-foreground: 215 100% 13%;
+    --secondary-hover: 38 50% 90%;
+
+    /* Accent Alert Red */
+    --accent: 351 78% 51%;
+    --accent-foreground: 0 0% 100%;
+    --accent-hover: 351 78% 46%;
+
+    /* Success Green */
+    --success: 140 65% 40%;
+    --success-foreground: 0 0% 100%;
+    --success-hover: 140 65% 35%;
+
+    /* Warning Yellow */
+    --warning: 45 100% 51%;
+    --warning-foreground: 215 100% 13%;
+    --warning-hover: 45 100% 46%;
+
+    /* Neutral System Colors */
+    --muted: 215 25% 96%;
+    --muted-foreground: 215 16% 47%;
+
+    --destructive: 351 78% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 215 25% 91%;
+    --input: 215 25% 91%;
+    --ring: 215 100% 13%;
+
+    --radius: 1rem;
+
+    /* Sidebar Colors */
+    --sidebar-background: 215 100% 13%;
+    --sidebar-foreground: 38 50% 95%;
+    --sidebar-primary: 38 50% 95%;
+    --sidebar-primary-foreground: 215 100% 13%;
+    --sidebar-accent: 215 100% 18%;
+    --sidebar-accent-foreground: 38 50% 95%;
+    --sidebar-border: 215 100% 18%;
+    --sidebar-ring: 38 50% 95%;
+
+    /* Custom Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-hover)));
+    --gradient-golden: linear-gradient(135deg, hsl(var(--secondary)), hsl(var(--secondary-hover)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-hover)) 100%);
+
+    /* Shadows */
+    --shadow-soft: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-medium: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-large: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+
+    /* Animation */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --transition-fast: all 0.15s ease-out;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-inter antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-inter font-semibold;
+  }
+}
+
+@layer components {
+  .hull-card {
+    @apply bg-card border border-border rounded-2xl shadow-[var(--shadow-soft)] transition-[var(--transition-smooth)];
+  }
+
+  .hull-button-primary {
+    @apply bg-primary hover:bg-[hsl(var(--primary-hover))] text-primary-foreground font-medium rounded-2xl px-6 py-3 transition-[var(--transition-fast)] shadow-[var(--shadow-soft)];
+  }
+
+  .hull-button-secondary {
+    @apply bg-secondary hover:bg-[hsl(var(--secondary-hover))] text-secondary-foreground font-medium rounded-2xl px-6 py-3 transition-[var(--transition-fast)] shadow-[var(--shadow-soft)];
+  }
+
+  .hull-input {
+    @apply bg-background border border-input rounded-2xl px-4 py-3 text-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-ring focus:border-ring transition-[var(--transition-fast)];
+  }
+
+  .hull-status-badge {
+    @apply inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .hull-status-active {
+    @apply hull-status-badge bg-[hsl(var(--success)/0.1)] text-[hsl(var(--success))] border border-[hsl(var(--success)/0.2)];
+  }
+
+  .hull-status-pending {
+    @apply hull-status-badge bg-[hsl(var(--warning)/0.1)] text-[hsl(var(--warning-foreground))] border border-[hsl(var(--warning)/0.2)];
+  }
+
+  .hull-status-critical {
+    @apply hull-status-badge bg-[hsl(var(--accent)/0.1)] text-[hsl(var(--accent))] border border-[hsl(var(--accent)/0.2)];
+  }
+}
