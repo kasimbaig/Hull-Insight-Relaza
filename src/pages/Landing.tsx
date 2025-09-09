@@ -317,9 +317,9 @@ const Landing = () => {
             </h1>
             
             {/* Subtitle with Typewriter Effect */}
-            <p className="text-xl md:text-2xl lg:text-3xl mb-12 leading-relaxed max-w-4xl mx-auto text-blue-100 font-light">
+            {/* <p className="text-xl md:text-2xl lg:text-3xl mb-12 leading-relaxed max-w-4xl mx-auto text-blue-100 font-light">
               {slides[currentSlide].description}
-            </p>
+            </p> */}
 
             {/* CTA Buttons */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
@@ -336,7 +336,7 @@ const Landing = () => {
                 </div>
 
             {/* Stats Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 max-w-4xl mx-auto">
+            {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 max-w-4xl mx-auto">
               <div className="text-center">
                 <div className="text-4xl md:text-5xl font-bold text-white mb-2">1000+</div>
                 <div className="text-blue-200 text-lg">Active Missions</div>
@@ -349,7 +349,7 @@ const Landing = () => {
                 <div className="text-4xl md:text-5xl font-bold text-white mb-2">AI-Powered</div>
                 <div className="text-blue-200 text-lg">Analytics</div>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
         
