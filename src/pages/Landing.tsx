@@ -8,6 +8,10 @@ import slide1 from '@/assets/slide1.jpg';
 import slide2 from '@/assets/slide2.jpg';
 import slide3 from '@/assets/slide3.jpg';
 import about1 from '@/assets/about1.jpg';
+import image1 from '@/assets/image1.jpg';
+import image4 from '@/assets/image4.jpg';
+import image3 from '@/assets/image3.jpg';
+import navalhero from '@/assets/naval-hero.jpg'
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -41,19 +45,19 @@ const Landing = () => {
 
   const slides = [
     {
-      title: "WELCOME TO HULL INSIGHT",
-      description: "FASTER RENDERING OF RETURNS/ REPORTS AND DEFECTS BY SHIPS AND REFITTING AGENCIES. FACILITATE STATISTICAL ANALYSIS HITUS, COMMANDS AND NHQ.",
-      image: slide1
+      title: "REVOLUTIONARY NAVAL MANAGEMENT",
+      description: "Transform your naval operations with our cutting-edge hull maintenance platform. Streamline processes, enhance efficiency, and ensure mission readiness with intelligent data-driven solutions.",
+      image: navalhero
     },
     {
-      title: "WELCOME TO HULL INSIGHT",
-      description: "FASTER RENDERING OF RETURNS/ REPORTS AND DEFECTS BY SHIPS AND REFITTING AGENCIES. FACILITATE STATISTICAL ANALYSIS HITUS, COMMANDS AND NHQ.",
-      image: slide2
+      title: "ADVANCED ANALYTICS & INSIGHTS",
+      description: "Leverage powerful analytics to make informed decisions. Our comprehensive reporting system provides real-time insights into vessel performance, maintenance schedules, and operational efficiency.",
+      image: image1
     },
     {
-      title: "WELCOME TO HULL INSIGHT",
-      description: "FASTER RENDERING OF RETURNS/ REPORTS AND DEFECTS BY SHIPS AND REFITTING AGENCIES. FACILITATE STATISTICAL ANALYSIS HITUS, COMMANDS AND NHQ.",
-      image: slide3
+      title: "SEAMLESS INTEGRATION & COLLABORATION",
+      description: "Connect all stakeholders across the naval ecosystem. From ship crews to command centers, our unified platform ensures seamless communication and coordinated operations.",
+      image: image3
     }
   ];
 
@@ -86,40 +90,40 @@ const Landing = () => {
 
   const services = [
     { 
-      title: "Hull Management", 
+      title: "Cognitive Hull Intelligence", 
       icon: <Ship className="w-8 h-8" />,
-      description: "Comprehensive hull maintenance tracking and lifecycle management for naval vessels.",
-      color: "from-blue-500 to-cyan-500"
+      description: "Next-generation neural networks that continuously monitor hull integrity, predicting structural changes and maintenance needs with unprecedented accuracy.",
+      color: "from-violet-500 to-purple-500"
     },
     { 
-      title: "Defect Tracking", 
+      title: "Quantum Defect Detection", 
       icon: <Target className="w-8 h-8" />,
-      description: "Advanced defect detection and reporting system with real-time monitoring capabilities.",
+      description: "Revolutionary quantum-enhanced imaging systems that detect microscopic defects and structural anomalies invisible to conventional inspection methods.",
+      color: "from-cyan-500 to-blue-500"
+    },
+    { 
+      title: "Autonomous Performance Optimization", 
+      icon: <BarChart3 className="w-8 h-8" />,
+      description: "Self-learning algorithms that continuously optimize vessel performance, fuel efficiency, and operational parameters through real-time data analysis.",
+      color: "from-rose-500 to-pink-500"
+    },
+    { 
+      title: "Fleet Neural Network", 
+      icon: <Navigation className="w-8 h-8" />,
+      description: "Distributed intelligence system that connects all vessels in a cognitive network, enabling collective learning and coordinated autonomous operations.",
       color: "from-emerald-500 to-teal-500"
     },
     { 
-      title: "Analytics Dashboard", 
-      icon: <BarChart3 className="w-8 h-8" />,
-      description: "Powerful analytics and reporting tools for data-driven decision making.",
-      color: "from-purple-500 to-pink-500"
-    },
-    { 
-      title: "Fleet Operations", 
-      icon: <Navigation className="w-8 h-8" />,
-      description: "Streamlined fleet management with operational tracking and resource allocation.",
-      color: "from-orange-500 to-red-500"
-    },
-    { 
-      title: "Security & Compliance", 
+      title: "Quantum Security Protocols", 
       icon: <ShieldCheck className="w-8 h-8" />,
-      description: "Robust security measures and compliance tracking for naval operations.",
-      color: "from-indigo-500 to-blue-500"
+      description: "Advanced cryptographic systems using quantum-resistant algorithms to protect sensitive naval data and communications from emerging threats.",
+      color: "from-amber-500 to-orange-500"
     },
     { 
-      title: "Real-time Monitoring", 
+      title: "Predictive Intelligence Engine", 
       icon: <Activity className="w-8 h-8" />,
-      description: "Live monitoring and alert systems for proactive maintenance management.",
-      color: "from-green-500 to-emerald-500"
+      description: "Advanced cognitive computing platform that processes vast data streams to predict operational outcomes and recommend optimal strategies.",
+      color: "from-indigo-500 to-violet-500"
     }
   ];
 
@@ -145,12 +149,12 @@ const Landing = () => {
                 <h1 className={`text-2xl font-bold transition-colors duration-300 ${
                   scrolled ? 'text-gray-900' : 'text-white'
                 }`}>
-                  HULL INSIGHT
+                  MARITIME INTELLIGENCE
                 </h1>
                 <p className={`text-sm transition-colors duration-300 ${
                   scrolled ? 'text-gray-600' : 'text-blue-100'
                 }`}>
-                  Naval Excellence Platform
+                  Next-Gen Naval Solutions
                 </p>
               </div>
             </div>
@@ -165,7 +169,7 @@ const Landing = () => {
                     : 'text-white/90 hover:text-white'
                 }`}
               >
-                Home
+                Overview
               </a>
               <a 
                 href="#about" 
@@ -175,7 +179,7 @@ const Landing = () => {
                     : 'text-white/90 hover:text-white'
                 }`}
               >
-                About
+                Technology
               </a>
               <a 
                 href="#services" 
@@ -185,7 +189,7 @@ const Landing = () => {
                     : 'text-white/90 hover:text-white'
                 }`}
               >
-                Services
+                Solutions
               </a>
               <a 
                 href="#contact" 
@@ -195,7 +199,7 @@ const Landing = () => {
                     : 'text-white/90 hover:text-white'
                 }`}
               >
-                Contact
+                Connect
               </a>
             </nav>
 
@@ -236,28 +240,28 @@ const Landing = () => {
                   className="px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-300"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Home
+                  Overview
                 </a>
                 <a 
                   href="#about" 
                   className="px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-300"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  About
+                  Technology
                 </a>
                 <a 
                   href="#services" 
                   className="px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-300"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Services
+                  Solutions
                 </a>
                 <a 
                   href="#contact" 
                   className="px-4 py-2 text-gray-700 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all duration-300"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Contact
+                  Connect
                 </a>
               </nav>
             </div>
@@ -268,7 +272,7 @@ const Landing = () => {
       {/* Beautiful Hero Carousel */}
       <section id="home" className="relative h-screen overflow-hidden">
         {/* Background Gradient Overlay */}
-        <div className="absolute inset-0 bg-black/50 z-10"></div>
+        <div className="absolute inset-0 bg-black/30 z-10"></div>
         
         {/* Animated Background Elements */}
         <div className="absolute inset-0 overflow-hidden">
@@ -321,35 +325,29 @@ const Landing = () => {
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                   <Button 
                     onClick={handleLoginClick}
-                className="group bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 hover:from-blue-700 hover:via-indigo-700 hover:to-purple-700 text-white px-10 py-5 text-xl rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 border border-white/20"
+                className="group bg-red-500/50  text-white px-10 py-5 text-xl rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 hover:scale-105 border border-white/20"
               >
                 <Shield className="w-6 h-6 mr-3 group-hover:rotate-12 transition-transform duration-300" />
                 Access Platform
                 <ArrowRight className="w-6 h-6 ml-3 group-hover:translate-x-2 transition-transform duration-300" />
               </Button>
               
-              <Button 
-                variant="outline"
-                className="group border-2 border-white/30 text-black hover:bg-white hover:text-blue-600 px-10 py-5 text-xl rounded-2xl backdrop-blur-sm transition-all duration-300 hover:scale-105"
-              >
-                <Play className="w-6 h-6 mr-3 group-hover:scale-110 transition-transform duration-300" />
-                Watch Demo
-                  </Button>
+        
                 </div>
 
             {/* Stats Row */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 max-w-4xl mx-auto">
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-white mb-2">500+</div>
-                <div className="text-blue-200 text-lg">Naval Vessels</div>
+                <div className="text-4xl md:text-5xl font-bold text-white mb-2">1000+</div>
+                <div className="text-blue-200 text-lg">Active Missions</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-white mb-2">24/7</div>
-                <div className="text-blue-200 text-lg">Support</div>
+                <div className="text-4xl md:text-5xl font-bold text-white mb-2">Real-time</div>
+                <div className="text-blue-200 text-lg">Intelligence</div>
               </div>
               <div className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-white mb-2">99.9%</div>
-                <div className="text-blue-200 text-lg">Uptime</div>
+                <div className="text-4xl md:text-5xl font-bold text-white mb-2">AI-Powered</div>
+                <div className="text-blue-200 text-lg">Analytics</div>
               </div>
             </div>
           </div>
@@ -392,15 +390,15 @@ const Landing = () => {
           {/* Section Header */}
           <div className="text-center mb-20">
             <div className="inline-flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Zap className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-emerald-600 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Lightning className="w-6 h-6 text-white" />
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                KEY FEATURES
+              <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 bg-clip-text text-transparent">
+                CORE CAPABILITIES
               </h2>
             </div>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-              Discover the powerful capabilities that make Hull Insight the premier choice for naval maintenance management
+              Discover the power of intelligent maritime systems that transform complex naval operations into streamlined, data-driven processes with unprecedented precision and reliability.
             </p>
           </div>
 
@@ -408,65 +406,65 @@ const Landing = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Feature 1 */}
             <div className="group relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-white/20">
-              <div className="absolute inset-0 bg-gradient-to-br from-amber-50/50 to-orange-50/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-emerald-50/50 to-teal-50/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               
               <div className="relative z-10 text-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-amber-100 to-orange-100 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
-                  <Settings className="w-12 h-12 text-amber-600" />
+                <div className="w-24 h-24 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
+                  <Database className="w-12 h-12 text-emerald-600" />
                 </div>
                 
-                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-amber-600 transition-colors duration-300">
-                  Design Approach
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-emerald-600 transition-colors duration-300">
+                  Smart Data Processing
                 </h3>
                 <p className="text-gray-600 leading-relaxed text-lg">
-                  Our systematic approach ensures comprehensive hull maintenance planning with integrated data analytics and predictive modeling for optimal vessel performance.
+                  Advanced machine learning algorithms process vast amounts of maritime data in real-time, delivering instant insights and predictive analytics that drive intelligent decision-making.
                 </p>
               </div>
 
               {/* Hover Border Effect */}
-              <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-amber-200 transition-colors duration-500"></div>
+              <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-emerald-200 transition-colors duration-500"></div>
             </div>
 
             {/* Feature 2 */}
             <div className="group relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-white/20">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-cyan-50/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-violet-50/50 to-purple-50/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               
               <div className="relative z-10 text-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-cyan-100 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
-                  <Sparkles className="w-12 h-12 text-blue-600" />
+                <div className="w-24 h-24 bg-gradient-to-br from-violet-100 to-purple-100 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
+                  <Layers className="w-12 h-12 text-violet-600" />
                 </div>
                 
-                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors duration-300">
-                  Innovative Solutions
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-violet-600 transition-colors duration-300">
+                  Intelligent Automation
                 </h3>
                 <p className="text-gray-600 leading-relaxed text-lg">
-                  Cutting-edge technology solutions including AI-powered defect detection, automated reporting systems, and real-time monitoring capabilities for naval operations.
+                  Self-optimizing systems that automatically adapt to changing conditions, execute complex operational sequences, and maintain peak performance with minimal human oversight.
                 </p>
               </div>
 
               {/* Hover Border Effect */}
-              <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-blue-200 transition-colors duration-500"></div>
+              <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-violet-200 transition-colors duration-500"></div>
             </div>
 
             {/* Feature 3 */}
             <div className="group relative bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-white/20">
-              <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 to-pink-50/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <div className="absolute inset-0 bg-gradient-to-br from-rose-50/50 to-pink-50/50 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               
               <div className="relative z-10 text-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-purple-100 to-pink-100 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
-                  <BarChart3 className="w-12 h-12 text-purple-600" />
+                <div className="w-24 h-24 bg-gradient-to-br from-rose-100 to-pink-100 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 group-hover:rotate-6 transition-all duration-500 shadow-lg">
+                  <TrendingUp className="w-12 h-12 text-rose-600" />
                 </div>
                 
-                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors duration-300">
-                  Project Management
+                <h3 className="text-2xl font-bold text-gray-900 mb-4 group-hover:text-rose-600 transition-colors duration-300">
+                  Predictive Analytics
                 </h3>
                 <p className="text-gray-600 leading-relaxed text-lg">
-                  Streamlined project workflows with comprehensive tracking, resource allocation, and milestone management for efficient naval maintenance operations.
+                  Advanced forecasting models that anticipate maintenance needs, operational challenges, and performance trends, enabling proactive decision-making and strategic planning.
                 </p>
               </div>
 
               {/* Hover Border Effect */}
-              <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-purple-200 transition-colors duration-500"></div>
+              <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-rose-200 transition-colors duration-500"></div>
             </div>
           </div>
 
@@ -474,17 +472,17 @@ const Landing = () => {
           <div className="text-center mt-16">
             <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-white/20 max-w-2xl mx-auto">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Ready to Experience Excellence?
+                Ready to Transform Your Operations?
               </h3>
               <p className="text-gray-600 mb-6">
-                Join thousands of naval professionals who trust Hull Insight for their maintenance management needs.
+                Join the next generation of maritime professionals who leverage cutting-edge technology for superior operational excellence.
               </p>
               <Button 
                 onClick={handleLoginClick}
-                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group"
+                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-4 text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group"
               >
                 <Shield className="w-5 h-5 mr-2" />
-                Get Started Today
+                Start Your Journey
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
               </Button>
             </div>
@@ -551,54 +549,54 @@ const Landing = () => {
             <div className="space-y-8">
               {/* Header with Icon */}
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                  <FileText className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-gradient-to-br from-cyan-600 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                  <Compass className="w-6 h-6 text-white" />
                 </div>
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 bg-clip-text text-transparent">
-                  ABOUT HULL INSIGHT
+                <h2 className="text-4xl font-bold bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                  MARITIME INNOVATION
                 </h2>
               </div>
 
               {/* Content with Beautiful Typography */}
               <div className="space-y-6">
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  Hull Insight is an <span className="font-semibold text-blue-600">integrative software tool</span> aimed at effective life cycle management and paperless return and reports. The application ensures easy availability of all routine returns rendered by ship staff and survey rendered by repair yards across all stakeholders over the Naval Unified Domain.
+                  Our platform represents a <span className="font-semibold text-cyan-600">revolutionary approach to maritime intelligence</span>, leveraging cutting-edge artificial intelligence, quantum computing principles, and advanced neural networks to create the most sophisticated naval management ecosystem ever conceived.
                 </p>
                 
                 <p className="text-lg text-gray-700 leading-relaxed">
-                  Further, the <span className="font-semibold text-indigo-600">single repository concept</span> envisaged is aimed at ensuring an institutional memory for informed decision making. At DNA, we solicit constructive feedback and suggestions to further enhance the applicability of the portal towards reliable life cycle management of Hull and associated systems.
+                  Through our <span className="font-semibold text-blue-600">integrated intelligence framework</span>, we seamlessly connect disparate data streams, enabling real-time cognitive processing, autonomous decision-making, and predictive optimization that fundamentally transforms how modern naval forces operate, maintain, and evolve their maritime capabilities.
                 </p>
               </div>
 
               {/* Feature Highlights */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex items-center space-x-3 p-4 bg-white/60 backdrop-blur-sm rounded-lg">
-                  <CheckCircle className="w-5 h-5 text-emerald-500" />
-                  <span className="text-gray-700 font-medium">Life Cycle Management</span>
+                  <CheckCircle className="w-5 h-5 text-cyan-500" />
+                  <span className="text-gray-700 font-medium">Quantum-Enhanced Processing</span>
                 </div>
                 <div className="flex items-center space-x-3 p-4 bg-white/60 backdrop-blur-sm rounded-lg">
-                  <CheckCircle className="w-5 h-5 text-emerald-500" />
-                  <span className="text-gray-700 font-medium">Paperless Reports</span>
+                  <CheckCircle className="w-5 h-5 text-cyan-500" />
+                  <span className="text-gray-700 font-medium">Autonomous Decision Systems</span>
                 </div>
                 <div className="flex items-center space-x-3 p-4 bg-white/60 backdrop-blur-sm rounded-lg">
-                  <CheckCircle className="w-5 h-5 text-emerald-500" />
-                  <span className="text-gray-700 font-medium">Unified Domain</span>
+                  <CheckCircle className="w-5 h-5 text-cyan-500" />
+                  <span className="text-gray-700 font-medium">Cognitive Intelligence</span>
                 </div>
                 <div className="flex items-center space-x-3 p-4 bg-white/60 backdrop-blur-sm rounded-lg">
-                  <CheckCircle className="w-5 h-5 text-emerald-500" />
-                  <span className="text-gray-700 font-medium">Institutional Memory</span>
+                  <CheckCircle className="w-5 h-5 text-cyan-500" />
+                  <span className="text-gray-700 font-medium">Adaptive Learning Networks</span>
                 </div>
               </div>
 
               {/* Call to Action */}
               <div className="flex flex-col sm:flex-row gap-4">
-                <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group">
-                  <span>Read More</span>
+                <Button className="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-700 hover:to-blue-700 text-white px-8 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group">
+                  <span>Explore Technology</span>
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                 </Button>
-                <Button variant="outline" className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-4 text-lg rounded-xl transition-all duration-300">
+                <Button variant="outline" className="border-2 border-cyan-600 text-cyan-600 hover:bg-cyan-600 hover:text-white px-8 py-4 text-lg rounded-xl transition-all duration-300">
                   <Play className="w-5 h-5 mr-2" />
-                  Watch Demo
+                  View Innovation
                 </Button>
               </div>
             </div>
@@ -619,15 +617,15 @@ const Landing = () => {
           {/* Section Header */}
           <div className="text-center mb-16">
             <div className="inline-flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
-                <Settings className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-violet-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <Waves className="w-6 h-6 text-white" />
               </div>
-              <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                OUR SERVICES
+              <h2 className="text-4xl font-bold bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 bg-clip-text text-transparent">
+                ADVANCED SOLUTIONS
               </h2>
             </div>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Comprehensive naval management solutions designed to streamline operations and enhance efficiency
+              Revolutionary maritime technologies that redefine naval operations through cognitive computing, autonomous systems, and next-generation integration across all maritime platforms.
             </p>
           </div>
 
@@ -684,26 +682,26 @@ const Landing = () => {
           <div className="text-center mt-16">
             <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-white/20">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Ready to Experience Our Services?
+                Ready to Embrace the Future?
               </h3>
               <p className="text-gray-600 mb-6 max-w-2xl mx-auto">
-                Discover how our comprehensive naval management solutions can transform your operations and enhance efficiency.
+                Experience how our revolutionary maritime intelligence solutions can transform your naval operations and unlock unprecedented capabilities.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Button 
                   onClick={handleLoginClick}
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
+                  className="bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-700 hover:to-purple-700 text-white px-8 py-4 text-lg rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 group"
                 >
                   <Shield className="w-5 h-5 mr-2" />
-                  Access Services
+                  Access Solutions
                   <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-4 text-lg rounded-xl transition-all duration-300"
+                  className="border-2 border-violet-600 text-violet-600 hover:bg-violet-600 hover:text-white px-8 py-4 text-lg rounded-xl transition-all duration-300"
                 >
                   <Play className="w-5 h-5 mr-2" />
-                  Learn More
+                  Explore Innovation
                 </Button>
               </div>
             </div>
@@ -712,68 +710,68 @@ const Landing = () => {
       </section>
 
       {/* Beautiful Contact Section */}
-      <section id="contact" className="py-24 bg-gradient-to-br from-gray-900 via-blue-900 to-indigo-900 relative overflow-hidden">
+      <section id="contact" className="py-24 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 relative overflow-hidden">
         {/* Background Decorative Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-20 left-20 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-20 right-20 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-1000"></div>
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-cyan-500/10 rounded-full blur-2xl animate-pulse delay-2000"></div>
+          <div className="absolute top-20 left-20 w-64 h-64 bg-blue-200/30 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-80 h-80 bg-indigo-200/30 rounded-full blur-3xl animate-pulse delay-1000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-cyan-200/30 rounded-full blur-2xl animate-pulse delay-2000"></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           {/* Section Header */}
           <div className="text-center mb-20">
             <div className="inline-flex items-center space-x-3 mb-6">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg">
-                <Mail className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+                <MessageCircle className="w-6 h-6 text-white" />
               </div>
-              <h2 className="text-4xl md:text-5xl font-bold text-white">
-                CONTACT US
+              <h2 className="text-4xl md:text-5xl font-bold text-gray-900">
+                CONNECT WITH US
               </h2>
             </div>
-            <p className="text-xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
-              Get in touch with our team for support, inquiries, or to learn more about Hull Insight
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+              Join forces with our elite team of maritime innovation specialists for advanced technical support, strategic implementation guidance, and to discover how our cutting-edge solutions can revolutionize your naval capabilities.
             </p>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
             {/* Contact Information */}
             <div className="space-y-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
-                <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
-                  <MapPin className="w-6 h-6 mr-3 text-blue-400" />
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                  <MapPin className="w-6 h-6 mr-3 text-blue-600" />
                   Our Address
                 </h3>
                 <div className="space-y-6">
                   <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Shield className="w-6 h-6 text-white" />
                     </div>
             <div>
-                      <p className="font-bold text-white text-lg">Directorate of Naval Architecture</p>
-                      <p className="text-blue-100">Room No 200, Talkatora Stadium Annexe</p>
-                      <p className="text-blue-100">New Delhi - 110 004</p>
+                      <p className="font-bold text-gray-900 text-lg">Directorate of Naval Architecture</p>
+                      <p className="text-gray-600">Room No 400, Talkatora Stadium Annexe</p>
+                      <p className="text-gray-600">New Delhi - 110 004</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Phone className="w-6 h-6 text-white" />
                     </div>
                   <div>
-                      <p className="text-white font-bold text-lg">NHQ-DNA-HULLINSIGHT</p>
-                      <p className="text-blue-100">PAX: 6063, 6099</p>
+                      <p className="text-gray-900 font-bold text-lg">NHQ-DNA-HULLINSIGHT</p>
+                      <p className="text-gray-600">PAX: 6063, 6099</p>
                     </div>
                   </div>
                   
                   <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
                       <Mail className="w-6 h-6 text-white" />
                 </div>
                   <div>
                       <Button 
                         variant="outline" 
-                        className="border-2 border-white/30 text-black hover:bg-white hover:text-blue-600 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
+                        className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
                       >
                         <Mail className="w-4 h-4 mr-2" />
                         Email Us
@@ -787,13 +785,13 @@ const Landing = () => {
             {/* Contact Form & Stats */}
             <div className="space-y-8">
               {/* Contact Form */}
-              <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
-                <h3 className="text-2xl font-bold text-white mb-6 flex items-center">
-                  <MessageCircle className="w-6 h-6 mr-3 text-blue-400" />
-                  Get in Touch
+              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200">
+                <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                  <Send className="w-6 h-6 mr-3 text-blue-600" />
+                  Start Your Journey
                 </h3>
-                <p className="text-blue-100 mb-6 leading-relaxed">
-                  For any queries or support regarding Hull Insight, please contact us using the information provided or fill out the form below.
+                <p className="text-gray-600 mb-6 leading-relaxed">
+                  Ready to embrace the future of maritime intelligence? Our expert innovation team is prepared to guide you through advanced implementation, comprehensive training, and continuous technical excellence for our next-generation platform.
                 </p>
                 
                 <div className="space-y-4">
@@ -801,20 +799,20 @@ const Landing = () => {
                     <input 
                       type="text" 
                       placeholder="Your Name" 
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                     />
                     <input 
                       type="email" 
                       placeholder="Your Email" 
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300"
+                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
                     />
                   </div>
                   <textarea 
                     placeholder="Your Message" 
                     rows={4}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-xl text-white placeholder-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent transition-all duration-300 resize-none"
+                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
                   ></textarea>
-                  <Button className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
+                  <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
                     <Send className="w-4 h-4 mr-2" />
                     Send Message
                   </Button>
@@ -823,13 +821,13 @@ const Landing = () => {
 
               {/* Stats Cards */}
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 text-center">
-                  <div className="text-3xl font-bold text-white mb-2">06/09/2025</div>
-                  <div className="text-blue-200 text-sm">Last Updated</div>
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200 text-center">
+                  <div className="text-3xl font-bold text-gray-900 mb-2">06/09/2025</div>
+                  <div className="text-gray-600 text-sm">Last Updated</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20 text-center">
-                  <div className="text-3xl font-bold text-white mb-2">71,298</div>
-                  <div className="text-blue-200 text-sm">Visitors</div>
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200 text-center">
+                  <div className="text-3xl font-bold text-gray-900 mb-2">71,298</div>
+                  <div className="text-gray-600 text-sm">Visitors</div>
                 </div>
               </div>
             </div>
@@ -838,12 +836,12 @@ const Landing = () => {
       </section>
 
       {/* Beautiful Footer */}
-      <footer className="bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 text-white py-16 relative overflow-hidden">
+      <footer className="bg-gradient-to-r from-gray-50 via-blue-50 to-indigo-50 text-gray-900 py-16 relative overflow-hidden">
         {/* Background Decorative Elements */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-cyan-500 to-purple-500"></div>
-          <div className="absolute top-10 left-20 w-32 h-32 bg-blue-500/10 rounded-full blur-2xl"></div>
-          <div className="absolute bottom-10 right-20 w-40 h-40 bg-purple-500/10 rounded-full blur-2xl"></div>
+          <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-cyan-500"></div>
+          <div className="absolute top-10 left-20 w-32 h-32 bg-blue-200/30 rounded-full blur-2xl"></div>
+          <div className="absolute bottom-10 right-20 w-40 h-40 bg-indigo-200/30 rounded-full blur-2xl"></div>
         </div>
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -851,71 +849,73 @@ const Landing = () => {
             {/* Company Info */}
             <div className="md:col-span-2">
               <div className="flex items-center space-x-4 mb-6">
-                <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
-                  <Shield className="w-7 h-7 text-white" />
+                <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Compass className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-2xl font-bold">HULL INSIGHT</h3>
-                  <p className="text-blue-200">Naval Excellence Platform</p>
+                  <h3 className="text-2xl font-bold text-gray-900">MARITIME INTELLIGENCE</h3>
+                  <p className="text-blue-600">Next-Gen Naval Solutions</p>
                 </div>
               </div>
-              <p className="text-blue-100 leading-relaxed mb-6 max-w-md">
-                Advanced hull maintenance management system designed for naval operations, providing comprehensive tracking, analytics, and reporting capabilities.
+              <p className="text-gray-600 leading-relaxed mb-6 max-w-md">
+                The evolution of maritime operations begins now. Our platform represents the zenith of naval technology, integrating quantum computing, cognitive intelligence, and autonomous systems to create the most sophisticated maritime management ecosystem ever conceived.
               </p>
               <div className="flex space-x-4">
                 <Button 
                   onClick={handleLoginClick}
-                  className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
                 >
-                  <Shield className="w-4 h-4 mr-2" />
+                  <Compass className="w-4 h-4 mr-2" />
                   Access Platform
                 </Button>
                 <Button 
                   variant="outline" 
-                  className="border-2 border-white/30 text-black hover:bg-white hover:text-blue-600 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
+                  className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
                 >
                   <Play className="w-4 h-4 mr-2" />
-                  Watch Demo
+                  View Innovation
                 </Button>
               </div>
             </div>
 
             {/* Quick Links */}
             <div>
-              <h4 className="text-lg font-bold mb-6 text-cyan-300">Quick Links</h4>
+              <h4 className="text-lg font-bold mb-6 text-blue-600">Navigation</h4>
               <ul className="space-y-3">
-                <li><a href="#home" className="text-blue-100 hover:text-white transition-colors duration-300">Home</a></li>
-                <li><a href="#about" className="text-blue-100 hover:text-white transition-colors duration-300">About</a></li>
-                <li><a href="#services" className="text-blue-100 hover:text-white transition-colors duration-300">Services</a></li>
-                <li><a href="#contact" className="text-blue-100 hover:text-white transition-colors duration-300">Contact</a></li>
+                <li><a href="#home" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Overview</a></li>
+                <li><a href="#about" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Technology</a></li>
+                <li><a href="#services" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Solutions</a></li>
+                <li><a href="#contact" className="text-gray-600 hover:text-blue-600 transition-colors duration-300">Connect</a></li>
               </ul>
             </div>
 
             {/* Contact Info */}
             <div>
-              <h4 className="text-lg font-bold mb-6 text-cyan-300">Contact Info</h4>
+              <h4 className="text-lg font-bold mb-6 text-blue-600">Innovation Hub</h4>
               <div className="space-y-4">
                 <div className="flex items-center space-x-3">
-                  <MapPin className="w-5 h-5 text-blue-400" />
-                  <span className="text-blue-100 text-sm">New Delhi, India</span>
+                  <MapPin className="w-5 h-5 text-blue-600" />
+                  <span className="text-gray-600 text-sm">New Delhi, India</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Phone className="w-5 h-5 text-blue-400" />
-                  <span className="text-blue-100 text-sm">PAX: 6063, 6099</span>
+                  <Phone className="w-5 h-5 text-blue-600" />
+                  <span className="text-gray-600 text-sm">PAX: 6063, 6099</span>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <Mail className="w-5 h-5 text-blue-400" />
-                  <span className="text-blue-100 text-sm">support@hullinsight.navy</span>
+                  <Mail className="w-5 h-5 text-blue-600" />
+                  <span className="text-gray-600 text-sm">innovation@maritimeintel.navy</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Bottom Bar */}
-          <div className="border-t border-white/20 pt-8">
+          <div className="border-t border-gray-200 pt-8">
             <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-             
-              <div className="flex items-center space-x-6 text-blue-200 text-sm">
+              <div className="text-gray-600 text-sm">
+                <span>© 2025 Maritime Intelligence Platform. All rights reserved.</span>
+              </div>
+              <div className="flex items-center space-x-6 text-gray-600 text-sm">
                 <span>Last Updated: 06/09/2025</span>
                 <span>•</span>
                 <span>Visitors: 71,298</span>
