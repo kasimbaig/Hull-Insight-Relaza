@@ -734,100 +734,108 @@ const Landing = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-            {/* Contact Information */}
-            <div className="space-y-8">
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                  <MapPin className="w-6 h-6 mr-3 text-blue-600" />
-                  Our Address
-                </h3>
-                <div className="space-y-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <Shield className="w-6 h-6 text-white" />
-                    </div>
-            <div>
-                      <p className="font-bold text-gray-900 text-lg">Directorate of Naval Architecture</p>
-                      <p className="text-gray-600">Room No 400, Talkatora Stadium Annexe</p>
-                      <p className="text-gray-600">New Delhi - 110 004</p>
+          <div className="max-w-2xl mx-auto">
+            {/* Simple Creative Design */}
+            <div className="space-y-12">
+              {/* Main CTA Card */}
+              <div className="relative group">
+                {/* Multiple Glow Layers */}
+                <div className="absolute -inset-2 bg-gradient-to-r from-blue-600 via-indigo-600 to-cyan-600 rounded-3xl blur-lg opacity-20 group-hover:opacity-30 transition duration-1000 group-hover:duration-200"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-1000 group-hover:duration-200"></div>
+                
+                <div className="relative bg-white rounded-3xl p-12 text-center overflow-hidden">
+                  {/* Background Pattern */}
+                  <div className="absolute top-0 left-0 w-full h-full opacity-5">
+                    <div className="absolute top-4 left-4 w-8 h-8 border-2 border-blue-600 rounded-full"></div>
+                    <div className="absolute top-8 right-8 w-6 h-6 border-2 border-indigo-600 rounded-full"></div>
+                    <div className="absolute bottom-8 left-8 w-4 h-4 border-2 border-cyan-600 rounded-full"></div>
+                    <div className="absolute bottom-4 right-4 w-10 h-10 border-2 border-blue-600 rounded-full"></div>
+                  </div>
+                  
+                  {/* Animated Icon */}
+                  <div className="relative">
+                    <div className="w-20 h-20 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-8 group-hover:scale-110 transition-transform duration-300 relative">
+                      <Send className="w-10 h-10 text-white group-hover:rotate-12 transition-transform duration-300" />
+                      {/* Pulsing Ring */}
+                      <div className="absolute inset-0 rounded-full border-2 border-blue-400 animate-ping opacity-20"></div>
                     </div>
                   </div>
                   
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-indigo-500 to-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-6 h-6 text-white" />
-                    </div>
-                  <div>
-                      <p className="text-gray-900 font-bold text-lg">NHQ-DNA-HULLINSIGHT</p>
-                      <p className="text-gray-600">PAX: 6063, 6099</p>
-                    </div>
-                  </div>
+                  <h3 className="text-3xl font-bold text-gray-900 mb-4 group-hover:text-blue-600 transition-colors duration-300">
+                    Ready to Connect?
+                  </h3>
+                  <p className="text-gray-600 mb-8 text-lg max-w-md mx-auto">
+                    Let's build the future of maritime intelligence together.
+                  </p>
                   
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-6 h-6 text-white" />
-                </div>
-                  <div>
+                  {/* Creative Button Container */}
+                  <div className="relative">
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                      <Button 
+                        onClick={handleLoginClick}
+                        className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl relative overflow-hidden group/btn"
+                      >
+                        <span className="relative z-10">Get Started</span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700"></div>
+                      </Button>
                       <Button 
                         variant="outline" 
-                        className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105"
+                        className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 hover:scale-105 hover:shadow-xl relative overflow-hidden group/btn2"
                       >
-                        <Mail className="w-4 h-4 mr-2" />
-                        Email Us
+                        <span className="relative z-10">Learn More</span>
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-600/0 via-blue-600/20 to-blue-600/0 translate-x-[-100%] group-hover/btn2:translate-x-[100%] transition-transform duration-700"></div>
                       </Button>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Contact Form & Stats */}
-            <div className="space-y-8">
-              {/* Contact Form */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-lg border border-gray-200">
-                <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                  <Send className="w-6 h-6 mr-3 text-blue-600" />
-                  Start Your Journey
-                </h3>
-                <p className="text-gray-600 mb-6 leading-relaxed">
-                  Ready to embrace the future of maritime intelligence? Our expert innovation team is prepared to guide you through advanced implementation, comprehensive training, and continuous technical excellence for our next-generation platform.
-                </p>
-                
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <input 
-                      type="text" 
-                      placeholder="Your Name" 
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                    />
-                    <input 
-                      type="email" 
-                      placeholder="Your Email" 
-                      className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                    />
+              {/* Creative Contact Methods */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+                <div className="text-center group cursor-pointer relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-100 to-blue-200 rounded-3xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative w-20 h-20 bg-blue-100 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:bg-gradient-to-br group-hover:from-blue-600 group-hover:to-indigo-600 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                    <Phone className="w-10 h-10 text-blue-600 group-hover:text-white transition-all duration-300 group-hover:scale-110" />
+                    <div className="absolute inset-0 rounded-3xl border-2 border-blue-300 opacity-0 group-hover:opacity-100 group-hover:animate-ping"></div>
                   </div>
-                  <textarea 
-                    placeholder="Your Message" 
-                    rows={4}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 resize-none"
-                  ></textarea>
-                  <Button className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105">
-                    <Send className="w-4 h-4 mr-2" />
-                    Send Message
-                  </Button>
+                  <h4 className="font-bold text-gray-900 mb-2 text-lg group-hover:text-blue-600 transition-colors duration-300">Call</h4>
+                  <p className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors duration-300">PAX: 6063, 6099</p>
+                </div>
+
+                <div className="text-center group cursor-pointer relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-100 to-indigo-200 rounded-3xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative w-20 h-20 bg-indigo-100 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:bg-gradient-to-br group-hover:from-indigo-600 group-hover:to-blue-600 transition-all duration-300 group-hover:scale-110 group-hover:-rotate-3">
+                    <Mail className="w-10 h-10 text-indigo-600 group-hover:text-white transition-all duration-300 group-hover:scale-110" />
+                    <div className="absolute inset-0 rounded-3xl border-2 border-indigo-300 opacity-0 group-hover:opacity-100 group-hover:animate-ping"></div>
+                  </div>
+                  <h4 className="font-bold text-gray-900 mb-2 text-lg group-hover:text-indigo-600 transition-colors duration-300">Email</h4>
+                  <p className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors duration-300">innovation@maritimeintel.navy</p>
+                </div>
+
+                <div className="text-center group cursor-pointer relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-100 to-cyan-200 rounded-3xl blur-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative w-20 h-20 bg-cyan-100 rounded-3xl flex items-center justify-center mx-auto mb-6 group-hover:bg-gradient-to-br group-hover:from-cyan-600 group-hover:to-blue-600 transition-all duration-300 group-hover:scale-110 group-hover:rotate-3">
+                    <MessageCircle className="w-10 h-10 text-cyan-600 group-hover:text-white transition-all duration-300 group-hover:scale-110" />
+                    <div className="absolute inset-0 rounded-3xl border-2 border-cyan-300 opacity-0 group-hover:opacity-100 group-hover:animate-ping"></div>
+                  </div>
+                  <h4 className="font-bold text-gray-900 mb-2 text-lg group-hover:text-cyan-600 transition-colors duration-300">Chat</h4>
+                  <p className="text-sm text-gray-600 group-hover:text-gray-800 transition-colors duration-300">Live Support</p>
                 </div>
               </div>
 
-              {/* Stats Cards */}
-              <div className="grid grid-cols-2 gap-4">
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200 text-center">
-                  <div className="text-3xl font-bold text-gray-900 mb-2">06/09/2025</div>
-                  <div className="text-gray-600 text-sm">Last Updated</div>
+              {/* Creative Floating Elements */}
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-32 h-32 bg-gradient-to-r from-blue-200/30 to-indigo-200/30 rounded-full blur-xl animate-pulse"></div>
                 </div>
-                <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-200 text-center">
-                  <div className="text-3xl font-bold text-gray-900 mb-2">71,298</div>
-                  <div className="text-gray-600 text-sm">Visitors</div>
+                <div className="relative text-center">
+                  <div className="inline-flex items-center space-x-2 text-gray-500 text-sm">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce"></div>
+                    <span>Always innovating</span>
+                    <div className="w-2 h-2 bg-indigo-500 rounded-full animate-bounce delay-100"></div>
+                    <span>Always evolving</span>
+                    <div className="w-2 h-2 bg-cyan-500 rounded-full animate-bounce delay-200"></div>
+                  </div>
                 </div>
               </div>
             </div>
