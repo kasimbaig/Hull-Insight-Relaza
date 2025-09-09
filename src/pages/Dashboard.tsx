@@ -220,63 +220,8 @@ export default function Dashboard() {
         </div>
 
         {/* KPI Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {dashboardData.kpis.map((kpi, index) => (
-            <Card key={index} className="transition-smooth border border-gray-300 hover:border-violet-400 hover:shadow-soft rounded-2xl">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-muted-foreground text-sm font-medium">{kpi.title}</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <h3 className="text-3xl font-bold">{kpi.value}</h3>
-                      <Badge variant="secondary" className="text-xs">
-                        {kpi.trend}
-                      </Badge>
-                    </div>
-                  </div>
-                  <div className={`w-12 h-12 rounded-2xl ${kpi.color} flex items-center justify-center ring-1 ring-white/30`}>
-                    <kpi.icon className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Line Chart - Survey Compliance Trend */}
-          <Card className="border border-gray-300 hover:border-violet-400 transition-colors">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-5 h-5" />
-                Survey Compliance Trend
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-80">
-                <Line options={chartOptions} data={lineChartData} />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Bar Chart - Vessel Maintenance Status */}
-          <Card className="border border-gray-300 hover:border-violet-400 transition-colors">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Activity className="w-5 h-5" />
-                Vessel Maintenance Status
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-80">
-                <Bar options={chartOptions} data={barChartData} />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+       
+ <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Doughnut Chart - Survey Status Distribution */}
           <Card className="border border-gray-300 hover:border-violet-400 transition-colors">
             <CardHeader>
@@ -322,6 +267,40 @@ export default function Dashboard() {
             </CardContent>
           </Card>
         </div>
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Line Chart - Survey Compliance Trend */}
+          <Card className="border border-gray-300 hover:border-violet-400 transition-colors">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5" />
+                Survey Compliance Trend
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <Line options={chartOptions} data={lineChartData} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Bar Chart - Vessel Maintenance Status */}
+          <Card className="border border-gray-300 hover:border-violet-400 transition-colors">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Activity className="w-5 h-5" />
+                Vessel Maintenance Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <Bar options={chartOptions} data={barChartData} />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+       
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Recent Activities */}
